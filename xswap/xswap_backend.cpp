@@ -175,7 +175,7 @@ static PyMethodDef XSwapMethods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-char docstring[] = "TEST DOCS";
+char docstring[] = "INSERT DOCS HERE";
 
 static struct PyModuleDef xswapmodule = {
     PyModuleDef_HEAD_INIT,

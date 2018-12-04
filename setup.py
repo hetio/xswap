@@ -1,12 +1,13 @@
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
-module1 = Extension('xswap._xswap_backend',
-                    sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
-                    )
+xswap_cpp_extension = Extension(
+    'xswap._xswap_backend', sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
+)
 
 setup(
     name='xswap',
-    version='1.0',
-    description='This is a demo package',
-    ext_modules=[module1]
+    version='0.1',
+    description='Python-wrapped C/C++ library for degree-preserving network randomization',
+    ext_modules=[xswap_cpp_extension],
+    packages=['xswap'],
 )
