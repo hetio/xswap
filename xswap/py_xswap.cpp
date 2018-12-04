@@ -41,8 +41,25 @@ PyObject* edges_to_py_list(int **edges, int num_edges) {
     return py_list;
 }
 
-static PyObject* _xswap_backend(PyObject *self, PyObject *args) {
-    // Get arguments from python side of the API and compute quantities where needed
+PyObject* stats_to_py_dict(int same_edge, int self_loop, int duplicate, int undir_duplicate, int excluded) {
+    PyObject* py_same_edge = PyLong_FromLong(same_edge);
+    PyObject* py_self_loop = PyLong_FromLong(self_loop);
+    PyObject* py_duplicate = PyLong_FromLong(duplicate);
+    PyObject* py_undir_duplicate = PyLong_FromLong(undir_duplicate);
+    PyObject* py_excluded = PyLong_FromLong(excluded);
+
+    PyObject* dict = PyDict_New();
+    int code;
+    code = PyDict_SetItemString(dict, "same_edge", py_same_edge);
+    code = PyDict_SetItemString(dict, "self_loop", py_self_loop);
+    code = PyDict_SetItemString(dict, "duplicate", py_duplicate);
+    code = PyDict_SetItemString(dict, "undir_duplicate", py_undir_duplicate);
+    code = PyDict_SetItemString(dict, "excluded", py_excluded);
+    return dict;
+}
+
+static PyObject* _xswap(PyObject *self, PyObject *args) {
+    // Get arguments from python and compute quantities where needed
     PyObject *py_edges, *py_excluded_edges;
     int max_source, max_target, num_swaps, seed, directed;
     int parsed_successfully = PyArg_ParseTuple(args, "OOiipii", &py_edges, &py_excluded_edges,
@@ -52,9 +69,9 @@ static PyObject* _xswap_backend(PyObject *self, PyObject *args) {
 
     // Load edges from python list
     int num_edges = (int)PyList_Size(py_edges);
-    int num_excluded = (int)PyList_Size(py_excluded_edges);
+    int num_excluded_edges = (int)PyList_Size(py_excluded_edges);
     int** edges = py_list_to_edges(py_edges, num_edges);
-    int** excluded_edges = py_list_to_edges(py_excluded_edges, num_excluded);
+    int** excluded_edges = py_list_to_edges(py_excluded_edges, num_excluded_edges);
 
     // Create hash table for possible edges and add existing edges
     EdgeHashTable edges_set = EdgeHashTable(max_source, max_target);
@@ -92,7 +109,6 @@ static PyObject* _xswap_backend(PyObject *self, PyObject *args) {
 		int new_edge_a[2] = { edge_a[0], edge_b[1] };
 		int new_edge_b[2] = { edge_b[0], edge_a[1] };
 		int* new_edges[2] = { new_edge_a, new_edge_b };
-
 		// Check validity of both new edges
 		bool valid = true;
 		for (int i = 0; i < 2; i++) {
@@ -104,16 +120,14 @@ static PyObject* _xswap_backend(PyObject *self, PyObject *args) {
 				break;
 			}
 			// New edge already exists
-            int new_edge_cantor = cantor_pair(new_edge);
-			if (get_n_bit(edge_hash_table[new_edge_cantor / CHAR_SIZE], new_edge_cantor % CHAR_SIZE)) {
+			if (edges_set.contains(new_edge)) {
 				duplicate += 1;
 				valid = false;
 				break;
 			}
 			// Undirected and reverse of new edge already exists
 			int reversed[2] = { new_edge[1], new_edge[0] };
-            int reversed_cantor = cantor_pair(reversed);
-			if (!directed && get_n_bit(edge_hash_table[reversed_cantor / CHAR_SIZE], reversed_cantor % CHAR_SIZE)) {
+			if (!directed && edges_set.contains(reversed)) {
 				undir_duplicate += 1;
 				valid = false;
 				break;
@@ -130,78 +144,49 @@ static PyObject* _xswap_backend(PyObject *self, PyObject *args) {
 			}
 		}
 		if (valid) {
-            int cantor_a = cantor_pair(edge_a);
-            int cantor_b = cantor_pair(edge_b);
-
-            set_n_bit_false(&edge_hash_table[cantor_a / CHAR_SIZE], cantor_a % CHAR_SIZE);
-            set_n_bit_false(&edge_hash_table[cantor_b / CHAR_SIZE], cantor_b % CHAR_SIZE);
+            edges_set.remove(edge_a);
+            edges_set.remove(edge_b);
 
 			int temp_target = edge_a[1];
 			edge_a[1] = edge_b[1];
 			edge_b[1] = temp_target;
 
-            cantor_a = cantor_pair(edge_a);
-            cantor_b = cantor_pair(edge_b);
-
-            set_n_bit_true(&edge_hash_table[cantor_a / CHAR_SIZE], cantor_a % CHAR_SIZE);
-            set_n_bit_true(&edge_hash_table[cantor_b / CHAR_SIZE], cantor_b % CHAR_SIZE);
+            edges_set.add(edge_a);
+            edges_set.add(edge_b);
 		}
 	}
 
     // Get new edges as python list
+    PyObject* py_list = edges_to_py_list(edges, num_edges);
+
     // Get stats as python dict
+    PyObject* stats_py_dict = stats_to_py_dict(same_edge, self_loop, duplicate, undir_duplicate, excluded);
+
     // Create and return a python tuple of new_edges, stats
-    return PyLong_FromLong(6);
-}
-
-static PyObject* testo_parse_list_of_tuples(PyObject *self, PyObject *args) {
-    PyObject* py_edges, py_excluded_edges;
-    int max_source, max_target, num_swaps, seed, directed;
-    int parsed_successfully = PyArg_ParseTuple(args, "OOiipii", &py_edges, &py_excluded_edges,
-        &max_source, &max_target, &directed, &num_swaps, &seed);
-    if (!parsed_successfully)
-        return NULL;
-    return PyLong_FromLong(5);
-}
-
-static PyObject* test_args(PyObject *self, PyObject *args) {
-    int a, b, c;
-    int d;
-    if (!PyArg_ParseTuple(args, "iiip", &a, &b, &c, &d))
-        return NULL;
-    a += 1;
-    b += 1;
-    c += 1;
-    PyObject* py_a = PyLong_FromLong(a);
-    PyObject* py_b = PyLong_FromLong(b);
-    PyObject* py_c = PyLong_FromLong(c);
-    PyObject* return_tuple = PyTuple_New(4);
-    PyObject* py_d = PyBool_FromLong(!d);
-    PyTuple_SET_ITEM(return_tuple, 0, py_a);
-    PyTuple_SET_ITEM(return_tuple, 1, py_b);
-    PyTuple_SET_ITEM(return_tuple, 2, py_c);
-    PyTuple_SET_ITEM(return_tuple, 3, py_d);
+    PyObject* return_tuple = PyTuple_New(2);
+    PyTuple_SET_ITEM(return_tuple, 0, py_list);
+    PyTuple_SET_ITEM(return_tuple, 1, stats_py_dict);
+    free(edges);
+    free(excluded_edges);
     return return_tuple;
 }
 
-static PyMethodDef TestoMethods[] = {
-    {"_test_args", test_args, METH_VARARGS, "Test argument parsing."},
-    {"parse_tuples", testo_parse_list_of_tuples, METH_VARARGS, "Parse args"},
-    {"_xswap_backend", _xswap_backend, METH_VARARGS, "Backend for edge permutation"},
+static PyMethodDef XSwapMethods[] = {
+    {"_xswap", _xswap, METH_VARARGS, "Backend for edge permutation"},
     {NULL, NULL, 0, NULL}
 };
 
-char test_doc[] = "TEST DOCS";
+char docstring[] = "TEST DOCS";
 
-static struct PyModuleDef testomodule = {
+static struct PyModuleDef xswapmodule = {
     PyModuleDef_HEAD_INIT,
-    "testo",   /* name of module */
-    test_doc, /* module documentation, may be NULL */
+    "_xswap_backend",   /* name of module */
+    docstring, /* module documentation, may be NULL */
     -1,       /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
-    TestoMethods
+    XSwapMethods
 };
 
-PyMODINIT_FUNC PyInit_testo(void) {
-    return PyModule_Create(&testomodule);
+PyMODINIT_FUNC PyInit__xswap_backend(void) {
+    return PyModule_Create(&xswapmodule);
 }
