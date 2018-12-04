@@ -4,7 +4,6 @@
 
 #include "hash_table.h"
 
-
 int** py_list_to_edges(PyObject *py_list, int num_edges) {
     int** edges_array;
 

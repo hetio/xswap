@@ -1,7 +1,7 @@
 from distutils.core import setup, Extension
 
 module1 = Extension('xswap._xswap_backend',
-                    sources=['xswap/py_xswap.cpp', 'xswap/hash_table.cpp'],
+                    sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
                     )
 
 setup(
