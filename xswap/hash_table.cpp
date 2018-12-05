@@ -24,8 +24,7 @@ void EdgeHashTable::remove(int *edge) {
 }
 
 void EdgeHashTable::create_hash_table(int hash_size) {
-    hash_table = (char*)malloc(sizeof(char) * hash_size);
-    memset(hash_table, (char)0, sizeof(char) * hash_size);
+    hash_table = (char*)calloc(hash_size, sizeof(char));
 }
 
 int EdgeHashTable::cantor_pair(int* edge) {
