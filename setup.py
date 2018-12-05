@@ -6,7 +6,7 @@ import setuptools
 directory = pathlib.Path(__file__).parent.resolve()
 
 # version
-init_path = directory.joinpath('manubot', '__init__.py')
+init_path = directory.joinpath('xswap', '__init__.py')
 text = init_path.read_text()
 pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
 version = pattern.search(text).group(1)
