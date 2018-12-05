@@ -40,7 +40,8 @@ PyObject* edges_to_py_list(int **edges, int num_edges) {
     return py_list;
 }
 
-PyObject* stats_to_py_dict(int same_edge, int self_loop, int duplicate, int undir_duplicate, int excluded) {
+PyObject* stats_to_py_dict(int num_swaps, int same_edge, int self_loop, int duplicate, int undir_duplicate, int excluded) {
+    PyObject* py_num_swaps = PyLong_FromLong(num_swaps);
     PyObject* py_same_edge = PyLong_FromLong(same_edge);
     PyObject* py_self_loop = PyLong_FromLong(self_loop);
     PyObject* py_duplicate = PyLong_FromLong(duplicate);
@@ -49,6 +50,7 @@ PyObject* stats_to_py_dict(int same_edge, int self_loop, int duplicate, int undi
 
     PyObject* dict = PyDict_New();
     int code;
+    code = PyDict_SetItemString(dict, "swap_attempts", py_num_swaps);
     code = PyDict_SetItemString(dict, "same_edge", py_same_edge);
     code = PyDict_SetItemString(dict, "self_loop", py_self_loop);
     code = PyDict_SetItemString(dict, "duplicate", py_duplicate);
@@ -163,7 +165,7 @@ static PyObject* _xswap(PyObject *self, PyObject *args) {
     PyObject* py_list = edges_to_py_list(edges, num_edges);
 
     // Get stats as python dict
-    PyObject* stats_py_dict = stats_to_py_dict(same_edge, self_loop, duplicate, undir_duplicate, excluded);
+    PyObject* stats_py_dict = stats_to_py_dict(num_swaps, same_edge, self_loop, duplicate, undir_duplicate, excluded);
 
     // Create and return a python tuple of new_edges, stats
     PyObject* return_tuple = PyTuple_New(2);
