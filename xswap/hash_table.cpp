@@ -4,7 +4,7 @@
 
 EdgeHashTable::EdgeHashTable(int max_source, int max_target) {
     int max_pair[2] = {max_source, max_target};
-	int size_of_hash = ((cantor_pair(max_pair) + 1) / CHAR_SIZE) + 1;
+    int size_of_hash = ((cantor_pair(max_pair) + 1) / CHAR_SIZE) + 1;
     create_hash_table(size_of_hash);
 }
 
@@ -25,13 +25,13 @@ void EdgeHashTable::remove(int *edge) {
 
 void EdgeHashTable::create_hash_table(int hash_size) {
     hash_table = (char*)malloc(sizeof(char) * hash_size);
-	memset(hash_table, (char)0, sizeof(char) * hash_size);
+    memset(hash_table, (char)0, sizeof(char) * hash_size);
 }
 
 int EdgeHashTable::cantor_pair(int* edge) {
     int source = edge[0];
-	int target = edge[1];
-	return ((source + target) * (source + target + 1) / 2) + target;
+    int target = edge[1];
+    return ((source + target) * (source + target + 1) / 2) + target;
 }
 
 char EdgeHashTable::get_bit(char word, char bit_position) {
