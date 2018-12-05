@@ -36,7 +36,7 @@ setuptools.setup(
     author_email='michael.zietz@gmail.com',
 
     # Specify python version
-    python_requires='>=3.3',
+    python_requires='>=3.5',
 
     ext_modules=[xswap_cpp_extension],
     packages=['xswap'],
