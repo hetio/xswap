@@ -134,6 +134,10 @@ static PyObject* _xswap(PyObject *self, PyObject *args) {
 			// New edges are in excluded edges. Because few excluded edges are expected,
 			// this iterates in O(n) rather than allocating a large hash table for all
 			// possible edges. Considerable memory savings when excluding few edges.
+            // An alternative is to pass excluded edges as a Python set and to use the
+            // built-in PySet_Contains function to check membership. This has the downside
+            // that the edge must be instantiated as a new Python tuple object and the
+            // values represented as new Python long integer objects.
 			for (int i = 0; i < num_excluded_edges; i++) {
 				if (excluded_edges[i][0] == new_edge[0] && excluded_edges[i][1] == new_edge[1]) {
 					excluded += 1;
@@ -175,14 +179,11 @@ static PyMethodDef XSwapMethods[] = {
     {NULL, NULL, 0, NULL}
 };
 
-char docstring[] = "INSERT DOCS HERE";
-
 static struct PyModuleDef xswapmodule = {
     PyModuleDef_HEAD_INIT,
-    "_xswap_backend",   /* name of module */
-    docstring, /* module documentation, may be NULL */
-    -1,       /* size of per-interpreter state of the module,
-                 or -1 if the module keeps state in global variables. */
+    "_xswap_backend",  /* name of module */
+    NULL,  /* module documentation, NULL */
+    -1,  /* -1 since the module keeps state in global variables. */
     XSwapMethods
 };
 
