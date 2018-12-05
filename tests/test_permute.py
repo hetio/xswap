@@ -5,8 +5,8 @@ import xswap
 
 @pytest.mark.parametrize('edges,permutable', [
     ([(0, 0), (1, 1), (1, 2), (2, 3)], True),
-    ([(0, 0)]),
-    (),
+    ([(0, 0)], False),
+    # (),
 ])
 def test_xswap_changes_edges(edges, permutable):
     """
