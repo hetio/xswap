@@ -1,15 +1,43 @@
-from setuptools import setup, Extension
+import pathlib
+import re
 
-xswap_cpp_extension = Extension(
+import setuptools
+
+directory = pathlib.Path(__file__).parent.resolve()
+
+# version
+init_path = directory.joinpath('manubot', '__init__.py')
+text = init_path.read_text()
+pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.MULTILINE)
+version = pattern.search(text).group(1)
+
+# long_description
+readme_path = directory.joinpath('README.md')
+long_description = readme_path.read_text()
+
+xswap_cpp_extension = setuptools.Extension(
     'xswap._xswap_backend',
     sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
     extra_compile_args=["-std=c++11"],
 )
 
-setup(
+setuptools.setup(
+    # Package details
     name='xswap',
-    version='0.1',
+    version=version,
+    url='https://github.com/greenelab/xswap',
     description='Python-wrapped C/C++ library for degree-preserving network randomization',
+    long_description_content_type='text/markdown',
+    long_description=long_description,
+    license='BSD 2-Clause',
+
+    # Author details
+    author='Michael Zietz',
+    author_email='michael.zietz@gmail.com',
+
+    # Specify python version
+    python_requires='>=3.3',
+
     ext_modules=[xswap_cpp_extension],
     packages=['xswap'],
 )
