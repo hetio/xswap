@@ -1,7 +1,9 @@
 from setuptools import setup, Extension
 
 xswap_cpp_extension = Extension(
-    'xswap._xswap_backend', sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
+    'xswap._xswap_backend',
+    sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
+    extra_compile_args=["-std=c++11"],
 )
 
 setup(
