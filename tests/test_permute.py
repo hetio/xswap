@@ -14,7 +14,7 @@ def test_xswap_changes_edges(edges, permutable):
     """
     edges_copy = edges.copy()
     new_edges, stats = xswap.permute_edge_list(
-        edges, directed=False, multiplier=10, excluded_pair_set=set(), seed=0, log=False)
+        edges, directed=False, multiplier=10, excluded_edges=set(), seed=0, log=False)
     assert edges == edges_copy
     if permutable:
         assert new_edges != edges
