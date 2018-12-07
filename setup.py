@@ -1,7 +1,10 @@
+import os
 import pathlib
 import re
 
 import setuptools
+
+os.environ["CC"] = "g++"
 
 directory = pathlib.Path(__file__).parent.resolve()
 
@@ -17,7 +20,7 @@ long_description = readme_path.read_text()
 
 xswap_cpp_extension = setuptools.Extension(
     'xswap._xswap_backend',
-    sources=['xswap/xswap_backend.cpp', 'xswap/hash_table.cpp'],
+    sources=['xswap/xswap_wrapper.cpp', 'xswap/hash_table.cpp', 'xswap/xswap.cpp'],
     extra_compile_args=["-std=c++11"],
 )
 

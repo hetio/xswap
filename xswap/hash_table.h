@@ -1,4 +1,6 @@
-#define CHAR_SIZE sizeof(char)
+#define _HASH_TABLE
+
+#define CHAR_BITS 8*sizeof(char)
 
 class EdgeHashTable
 {
@@ -7,6 +9,7 @@ class EdgeHashTable
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
+        void free_table();
 
     private:
         char* hash_table;

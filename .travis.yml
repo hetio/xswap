@@ -6,7 +6,7 @@ python:
 install:
   - pip install -r tests-require.txt
 compiler:
-  - gcc
+  - g++
 script:
   - python setup.py build
   - pip install .
