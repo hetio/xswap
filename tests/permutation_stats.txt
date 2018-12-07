@@ -1,1 +1,0 @@
-0.080 percent unchanged of 294328 total edges after 2943280 swap attempts

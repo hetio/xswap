@@ -25,9 +25,6 @@ def test_time():
     print(str(t2 - t1) + "  seconds elapsed.")
     assert edges != new_edges
     assert t2 - t1 < 5
-    with open(test_directory + 'permuted_edges.txt', 'w') as f:
-        for edge in new_edges:
-            f.write('%d,%d\n'.format(edge[0], edge[1]))
 
     num_repeats = 0
     old_set = set(edges)
@@ -37,5 +34,5 @@ def test_time():
             num_repeats += 1
     p_unch = num_repeats / len(edges)
     with open(test_directory + 'permutation_stats.txt', 'w') as f:
-        f.write('%.3f percent unchanged of %d total edges after '
-                '%d swap attempts\n'.format(p_unch, len(edges), 10*len(edges)))
+        f.write('{0:.3f} percent unchanged of {1} total edges after '
+                '{2} swap attempts\n'.format(p_unch, len(edges), 10*len(edges)))
