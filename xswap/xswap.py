@@ -3,8 +3,8 @@ from typing import List, Set, Tuple
 import xswap._xswap_backend
 
 
-def permute_edge_list(edge_list: List[Tuple[int, int]], directed: bool = False,
-                      bipartite: bool = True, multiplier: float = 10,
+def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool = False,
+                      allow_antiparallel: bool = False, multiplier: float = 10,
                       excluded_edges: Set[Tuple[int, int]] = set(), seed: int = 0):
     """
     Permute the edges of a graph using the XSwap method given by Hanhijärvi,
@@ -42,20 +42,11 @@ def permute_edge_list(edge_list: List[Tuple[int, int]], directed: bool = False,
         Random seed that will be passed to the C++ Mersenne Twister 19937 random
         number generator.
     """
-    if directed and bipartite:
-        raise NotImplementedError("Directed bipartite graphs are not supported.")
-    if not directed and not bipartite:
-        edge_list = [edge for edge in edge_list if edge[0] < edge[1]]
-
     max_source = max([i[0] for i in edge_list])
     max_target = max([i[1] for i in edge_list])
     num_swaps = int(multiplier * len(edge_list))
     new_edges, stats = xswap._xswap_backend._xswap(
-        edge_list, list(excluded_edges), max_source, max_target, directed,
-        num_swaps, seed)
-
-    if not directed and not bipartite:
-        reversed_edges = [(edge[1], edge[0]) for edge in new_edges]
-        new_edges.extend(reversed_edges)
+        edge_list, list(excluded_edges), max_source, max_target, allow_self_loops,
+        allow_antiparallel, num_swaps, seed)
 
     return new_edges, stats

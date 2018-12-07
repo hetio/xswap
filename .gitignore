@@ -2,4 +2,4 @@ build/
 .vscode/
 __pycache__/
 .pytest_cache/
-tests/permutation-stats.txt
+tests/permutation_stats.txt

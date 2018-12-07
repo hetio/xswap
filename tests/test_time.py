@@ -37,5 +37,5 @@ def test_time():
             num_repeats += 1
     p_unch = num_repeats / len(edges)
     with open(test_directory + 'permutation_stats.txt', 'w') as f:
-        f.write('{0:.3f} percent unchanged of {1} total edges after '
-                '{2} swap attempts\n'.format(p_unch, len(edges), 10*len(edges)))
+        f.write('Runtime: {:.3f} sec. {:.3f} percent unchanged of {} total edges after '
+                '{} swap attempts\n'.format(t2 - t1, p_unch, len(edges), 10*len(edges)))

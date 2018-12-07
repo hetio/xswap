@@ -1,10 +1,19 @@
 #include <cstdlib>
-#include "hash_table.h"
+#include "xswap.h"
 
 EdgeHashTable::EdgeHashTable(int max_source, int max_target) {
     int max_pair[2] = {max_source, max_target};
     int max_cantor = cantor_pair(max_pair);
     create_hash_table(max_cantor);
+}
+
+EdgeHashTable::EdgeHashTable(Edges edges) {
+    int max_pair[2] = {edges.max_source, edges.max_target};
+    int max_cantor = cantor_pair(max_pair);
+    create_hash_table(max_cantor);
+    for (int i = 0; i < edges.num_edges; i++) {
+        add(edges.edge_array[i]);
+    }
 }
 
 bool EdgeHashTable::contains(int *edge) {
