@@ -11,3 +11,4 @@ script:
   - python setup.py build
   - pip install .
   - pytest tests/
+  - cat tests/permutation_stats.txt
