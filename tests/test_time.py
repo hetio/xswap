@@ -22,7 +22,7 @@ def test_time():
     t1 = time.time()
     new_edges, stats = xswap.permute_edge_list(edges)
     t2 = time.time()
-    print(f"{t2 - t1} seconds elapsed.")
+    print(str(t2 - t1) + "  seconds elapsed.")
     assert edges != new_edges
     assert t2 - t1 < 5
     with open(test_directory + 'permuted_edges.txt', 'w') as f:
@@ -37,5 +37,5 @@ def test_time():
             num_repeats += 1
     p_unch = num_repeats / len(edges)
     with open(test_directory + 'permutation_stats.txt', 'w') as f:
-        f.write(f'{p_unch :.3f} percent unchanged of {len(edges)} total edges after '
-                f'{10*len(edges)} swap attempts\n')
+        f.write('%.3f percent unchanged of %d total edges after '
+                '%d swap attempts\n' % p_unch, len(edges), 10*len(edges))
