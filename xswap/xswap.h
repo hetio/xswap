@@ -20,6 +20,7 @@ class EdgeHashTable
 
     private:
         char* hash_table;
+        int max_cantor;
         void create_hash_table(int hash_size);
         int cantor_pair(int* edge);
         char get_bit(char word, char bit_position);

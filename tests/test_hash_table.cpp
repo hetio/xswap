@@ -10,7 +10,7 @@ void handle_eptr(std::exception_ptr eptr) {
             std::rethrow_exception(eptr);
         }
     } catch(const std::exception& e) {
-        std::cout << "Unexpected exception thrown while attempting bad element access \"" << e.what() << "\"\n";
+        std::cout << "Unexpected exception while attempting bad element access " << e.what() << "\n";
     }
 }
 
@@ -72,7 +72,7 @@ bool test_oob_insert(EdgeHashTable edges_set) {
         handle_eptr(eptr);
         return true;
     }
-    std::printf("No exception thrown on bad insert\n");
+    std::printf("No exception on OOB insert\n");
     return false;
 }
 
@@ -88,7 +88,7 @@ bool test_oob_access(EdgeHashTable edges_set) {
         handle_eptr(eptr);
         return true;
     }
-    std::printf("No exception thrown on OOB access\n");
+    std::printf("No exception on OOB access\n");
     return false;
 }
 
@@ -104,19 +104,58 @@ bool test_oob_remove(EdgeHashTable edges_set) {
         handle_eptr(eptr);
         return true;
     }
-    std::printf("No exception thrown on OOB removal\n");
+    std::printf("No exception on OOB removal\n");
+    return false;
+}
+
+bool test_remove_nonexistent(EdgeHashTable edges_set) {
+    int edge_to_access[2] = {2, 2};
+    std::exception_ptr eptr;
+    try {
+        edges_set.remove(edge_to_access);
+    } catch(std::logic_error) {
+        return true;
+    } catch(...) {
+        eptr = std::current_exception();
+        handle_eptr(eptr);
+        return true;
+    }
+    std::printf("No exception on removal of nonexisting element\n");
+    return false;
+}
+
+bool test_insert_existing(EdgeHashTable edges_set) {
+    int edge_to_access[2] = {2, 2};
+    edges_set.add(edge_to_access);
+    std::exception_ptr eptr;
+    try {
+        edges_set.add(edge_to_access);
+    } catch(std::logic_error) {
+        return true;
+    } catch(...) {
+        eptr = std::current_exception();
+        handle_eptr(eptr);
+        return true;
+    }
+    std::printf("No exception on addition of existing element\n");
     return false;
 }
 
 main(int argc, char const *argv[]) {
-    EdgeHashTable edges_set = EdgeHashTable(3, 3);
-    int num_tests = 5;
+    int num_tests = 7;
     bool test_passed[num_tests];
+
+    EdgeHashTable edges_set = EdgeHashTable(3, 3);
     test_passed[0] = test_add(edges_set);
+    edges_set = EdgeHashTable(3, 3);  // Reset so functions don't interfere
     test_passed[1] = test_remove(edges_set);
     test_passed[2] = test_oob_insert(edges_set);
     test_passed[3] = test_oob_access(edges_set);
     test_passed[4] = test_oob_remove(edges_set);
+    edges_set = EdgeHashTable(3, 3);
+    test_passed[5] = test_remove_nonexistent(edges_set);
+    edges_set = EdgeHashTable(3, 3);
+    test_passed[6] = test_insert_existing(edges_set);
 
     bool all_tests_passed = true;
     for (int i = 0; i < num_tests; i++) {

@@ -1,15 +1,17 @@
 #include <cstdlib>
+#include <stdexcept>
+#include <iostream>
 #include "xswap.h"
 
 EdgeHashTable::EdgeHashTable(int max_source, int max_target) {
     int max_pair[2] = {max_source, max_target};
-    int max_cantor = cantor_pair(max_pair);
+    max_cantor = cantor_pair(max_pair);
     create_hash_table(max_cantor);
 }
 
 EdgeHashTable::EdgeHashTable(Edges edges) {
     int max_pair[2] = {edges.max_source, edges.max_target};
-    int max_cantor = cantor_pair(max_pair);
+    max_cantor = cantor_pair(max_pair);
     create_hash_table(max_cantor);
     for (int i = 0; i < edges.num_edges; i++) {
         add(edges.edge_array[i]);
@@ -18,16 +20,28 @@ EdgeHashTable::EdgeHashTable(Edges edges) {
 
 bool EdgeHashTable::contains(int *edge) {
     int edge_cantor = cantor_pair(edge);
+    if (edge_cantor > max_cantor)
+        throw std::out_of_range("Attempting to check membership for out-of-bounds element.");
     return (bool)get_bit(hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
 void EdgeHashTable::add(int *edge) {
     int edge_cantor = cantor_pair(edge);
+    if (edge_cantor > max_cantor) {
+        throw std::out_of_range("Attempting to add an out-of-bounds element to the hash table.");
+    }
+    if (get_bit(hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS)) {
+        throw std::logic_error("Attempting to add an existing element.");
+    }
     set_bit_true(&hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
 void EdgeHashTable::remove(int *edge) {
     int edge_cantor = cantor_pair(edge);
+    if (edge_cantor > max_cantor)
+        throw std::out_of_range("Attempting to remove an out-of-bounds element.");
+    if (!get_bit(hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS))
+        throw std::logic_error("Attempting to remove a nonexisting element.");
     set_bit_false(&hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
