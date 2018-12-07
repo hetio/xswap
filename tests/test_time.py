@@ -1,17 +1,20 @@
 import os
 import time
 
+import requests
+
 import xswap
 
 test_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
 
 
 def load_edges():
-    edges_file = test_directory + 'GiG_edges.txt'
-    with open(edges_file) as f:
-        string_edges = f.readlines()
+    edges_url = "https://github.com/greenelab/xswap/raw/{}/{}".format(
+        "51cad9392880db08a4c5870f08a670c52877e78f", "graphs/GiG_edges.txt")
+    response = requests.get(edges_url)
     edges = list()
-    for edge in string_edges:
+    for edge in response.iter_lines():
+        edge = str(edge, 'utf-8')
         source, target = edge.split(',')
         edges.append((int(source), int(target)))
     return edges
