@@ -10,7 +10,7 @@ The `bipartite` argument determines the meaning of a node's value.
 A bipartite graph is a graph in which nodes can be divided into disjoint sets with connections exclusively between sets.
 For example, consider the graph shown in the figure below:
 
-<a href="#"><img src="docs/img/bipartite_graph.png" alt="Image of bipartite graph" width="50%"></a>
+<a href="#bipartite"><img src="docs/img/bipartite_graph.png" alt="Image of bipartite graph" width="50%" id="bipartite"></a>
 
 The adjacency matrix corresponding to a bipartite graph can be broken into four blocks.
 
