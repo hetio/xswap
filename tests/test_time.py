@@ -27,7 +27,7 @@ def test_time():
     assert t2 - t1 < 5
     with open(test_directory + 'permuted_edges.txt', 'w') as f:
         for edge in new_edges:
-            f.write('%d,%d\n', % (edge[0], edge[1]))
+            f.write('%d,%d\n' % (edge[0], edge[1]))
 
     num_repeats = 0
     old_set = set(edges)
