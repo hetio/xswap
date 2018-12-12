@@ -19,18 +19,16 @@ def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool =
         Edge list representing the graph to be randomized. Tuples can contain
         integer values representing nodes. No value should be greater than C++'s
         `INT_MAX`, in this case 2_147_483_647.
-    directed : bool
-        Whether (0, 1) and (1, 0) should be treated as different edges. `directed`
-        should be `False` when (0, 1) is equivalent to (1, 0). In this case, the
-        edges will be pruned so that only one copy of every edge is present.
-        After XSwap is complete, then, copies of every new edge will be made so
-        that the permuted edges have the same properties as the original edges.
-    bipartite : bool
-        Whether the set of source nodes is the same as the set of target nodes.
-        If (0, 0) is a self loop, then set `bipartite=False`. To permute a
-        bipartite graph, use only the edges going from one set of nodes to the
-        other. That is, only use the edges found in the biadjacency matrix. For
-        a more detailed explanation, see README.md.
+    allow_self_loops : bool
+        Whether to allow edges like (0, 0). In the case of bipartite graphs,
+        such an edge represents a connection between two distinct nodes, while
+        in other graphs it may represent an edge from a node to itself, in which
+        case an edge may or may not be meaningful depending on context.
+    allow_antiparallel : bool
+        Whether to allow simultaneous edges like (0, 1) and (1, 0). In the case
+        of bipartite graphs, these edges represent two connections between four
+        distinct nodes, while for other graphs, these may be connections between
+        the same two nodes.
     multiplier : float
         The number of edge swap attempts is determined by the product of the
         number of existing edges and multiplier. For example, if five edges are
