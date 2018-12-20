@@ -21,7 +21,9 @@ def load_edges():
 
 
 def test_time():
+    print("Loading edges")
     edges = load_edges()
+    print("Edges are loaded. Starting permutation.")
     t1 = time.time()
     new_edges, stats = xswap.permute_edge_list(edges)
     t2 = time.time()

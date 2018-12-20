@@ -20,7 +20,7 @@ long_description = readme_path.read_text()
 
 xswap_cpp_extension = setuptools.Extension(
     'xswap._xswap_backend',
-    sources=['xswap/xswap_wrapper.cpp', 'xswap/hash_table.cpp', 'xswap/xswap.cpp'],
+    sources=['xswap/hash_table.cpp', 'xswap/xswap.cpp', 'xswap/xswap_wrapper.cpp'],
     extra_compile_args=["-std=c++11"],
 )
 
@@ -29,7 +29,7 @@ setuptools.setup(
     name='xswap',
     version=version,
     url='https://github.com/greenelab/xswap',
-    description='Python-wrapped C/C++ library for degree-preserving network randomization',
+    description='Python-wrapped C++ library for degree-preserving network randomization',
     long_description_content_type='text/markdown',
     long_description=long_description,
     license='BSD 2-Clause',

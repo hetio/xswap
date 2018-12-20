@@ -1,3 +1,5 @@
+#include <vector>
+
 #define _XSWAP
 #define CHAR_BITS 8*sizeof(char)
 
@@ -16,16 +18,10 @@ class EdgeHashTable
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
-        void free_table();
 
     private:
-        char* hash_table;
-        int max_cantor;
-        void create_hash_table(int hash_size);
+        std::vector<bool> hash_table;
         int cantor_pair(int* edge);
-        char get_bit(char word, char bit_position);
-        void set_bit_true(char* word, char bit_position);
-        void set_bit_false(char* word, char bit_position);
 };
 
 struct statsCounter {

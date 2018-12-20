@@ -1,10 +1,10 @@
 #include <random>
+#include <iostream>
 #include "xswap.h"
 
 void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats) {
     // Initialize hash table for possible edges
     EdgeHashTable edges_set = EdgeHashTable(edges);
-
     // Initialize unbiased random number generator
     std::mt19937 rng(cond.seed);
     std::uniform_int_distribution<int> uni(0, edges.num_edges - 1);
@@ -31,6 +31,7 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
 
         bool valid = is_valid_swap(new_edges, edges_set, cond, stats);
         if (valid) {
+            std::cout << "VALID SWAP PERFORMED\n";
             edges_set.remove(edge_a);
             edges_set.remove(edge_b);
 
@@ -42,7 +43,6 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
             edges_set.add(edge_b);
         }
     }
-    edges_set.free_table();
 }
 
 bool is_valid_edge(int *new_edge, EdgeHashTable edges_set, Conditions valid_conditions,

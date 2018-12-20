@@ -169,5 +169,4 @@ main(int argc, char const *argv[]) {
         std::printf("Test failure\n");
         return 1;
     }
-    edges_set.free_table();
 }
