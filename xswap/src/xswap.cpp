@@ -3,7 +3,7 @@
 
 void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats) {
     // Initialize hash table for possible edges
-    EdgeHashTable edges_set = EdgeHashTable(edges);
+    HashTable edges_set = HashTable(edges);
 
     // Initialize unbiased random number generator
     std::mt19937 rng(cond.seed);
@@ -45,7 +45,7 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
     edges_set.free_table();
 }
 
-bool is_valid_edge(int *new_edge, EdgeHashTable edges_set, Conditions valid_conditions,
+bool is_valid_edge(int *new_edge, HashTable edges_set, Conditions valid_conditions,
                    statsCounter stats) {
     // New edge would be a self-loop
     if (!valid_conditions.allow_self_loop && new_edge[0] == new_edge[1]) {
@@ -73,7 +73,7 @@ bool is_valid_edge(int *new_edge, EdgeHashTable edges_set, Conditions valid_cond
     return true;
 }
 
-bool is_valid_swap(int **new_edges, EdgeHashTable edges_set, Conditions valid_conditions,
+bool is_valid_swap(int **new_edges, HashTable edges_set, Conditions valid_conditions,
                    statsCounter stats) {
     for (int i = 0; i < 2; i++) {
         bool is_valid = is_valid_edge(new_edges[i], edges_set, valid_conditions, stats);
@@ -82,4 +82,10 @@ bool is_valid_swap(int **new_edges, EdgeHashTable edges_set, Conditions valid_co
         }
     }
     return true;
+}
+
+size_t cantor_pair(int* edge) {
+    size_t source = edge[0];
+    size_t target = edge[1];
+    return ((source + target) * (source + target + 1) / 2) + target;
 }
