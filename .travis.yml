@@ -11,6 +11,6 @@ script:
   - python setup.py build
   - pip install .
   - pytest tests/
-  - g++ tests/test_hash_table.cpp xswap/hash_table.cpp -o tests/test_hash_table.o -std=c++11
+  - g++ tests/test_hash_table.cpp xswap/src/hash_table.cpp -o tests/test_hash_table.o -std=c++11
   - ./tests/test_hash_table.o
   - cat tests/permutation_stats.txt
