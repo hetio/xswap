@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
-#include "../xswap/xswap.h"
+#include "../xswap/src/xswap.h"
 
 void handle_eptr(std::exception_ptr eptr) {
     try {
