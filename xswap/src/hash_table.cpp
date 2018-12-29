@@ -6,6 +6,12 @@
 int CHAR_BITS = 8*sizeof(char);
 unsigned long long int MAX_MALLOC = 4000000000;
 
+size_t cantor_pair(int* edge) {
+    size_t source = edge[0];
+    size_t target = edge[1];
+    return ((source + target) * (source + target + 1) / 2) + target;
+}
+
 EdgeHashTable::EdgeHashTable(int max_source, int max_target) {
     int max_pair[2] = {max_source, max_target};
     max_cantor = cantor_pair(max_pair);
@@ -97,6 +103,7 @@ void BigHashTable::add(int *edge) {
     }
     size_t edge_cantor = cantor_pair(edge);
     hash_table.insert(edge_cantor);
+    // hash_table.emplace(edge_cantor);
 }
 
 void BigHashTable::remove(int *edge) {

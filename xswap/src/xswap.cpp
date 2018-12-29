@@ -38,8 +38,8 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
             edge_a[1] = edge_b[1];
             edge_b[1] = temp_target;
 
-            edges_set.add(edge_a);
-            edges_set.add(edge_b);
+            edges_set.add(new_edge_a);
+            edges_set.add(new_edge_b);
         }
     }
     edges_set.free_table();
@@ -82,10 +82,4 @@ bool is_valid_swap(int **new_edges, HashTable edges_set, Conditions valid_condit
         }
     }
     return true;
-}
-
-size_t cantor_pair(int* edge) {
-    size_t source = edge[0];
-    size_t target = edge[1];
-    return ((source + target) * (source + target + 1) / 2) + target;
 }

@@ -1,4 +1,5 @@
 #include <unordered_set>
+#include <set>
 
 extern int CHAR_BITS;
 extern unsigned long long int MAX_MALLOC;
@@ -42,7 +43,8 @@ class BigHashTable
         void remove(int *edge);
 
     private:
-        std::unordered_set<size_t> hash_table;
+        // std::unordered_set<size_t> hash_table;
+        std::set<size_t> hash_table;
 };
 
 // Faster edge hash table for smaller numbers of edges
