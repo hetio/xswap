@@ -1,4 +1,4 @@
-import pathlib as _pathlib
+import csv
 
 
 def load_str_edges(filename, node_delim=',', edge_delim='\n'):
@@ -6,15 +6,9 @@ def load_str_edges(filename, node_delim=',', edge_delim='\n'):
     Load edges from file into memory. Store edges as a list and store each edge
     as Tuple[str, str]. Used to load edges for preprocessing.
     """
-    file_path = _pathlib.Path(filename)
-    if not file_path.is_file():
-        raise FileNotFoundError
-
-    with open(file_path, 'r') as f:
-        graph_string = f.read()
-    str_edges = [
-        edge.split(node_delim) for edge in graph_string.split(edge_delim) if edge != ''
-    ]
+    with open(filename, 'r', newline='') as f:
+        reader = csv.reader(f, delimiter=node_delim, lineterminator=edge_delim)
+        str_edges = [tuple(row) for row in reader if len(row) > 1]
     return str_edges
 
 
@@ -30,6 +24,20 @@ def load_processed_edges(filename):
     return edges
 
 
+def write_edges(filename, edges, node_delim=',', edge_delim='\n'):
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f, delimiter=node_delim, lineterminator=edge_delim)
+        writer.writerows(edges)
+
+
+def write_mapping(filename, mapping, delimiter=','):
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f, delimiter=delimiter)
+        writer.writerow(['original', 'mapped'])
+        for original, mapped in mapping.items():
+            writer.writerow([original, mapped])
+
+
 def _map_nodes_to_int(nodes):
     """
     Return a dict mapping a list of nodes to their sorted indices. Nodes should
@@ -39,33 +47,25 @@ def _map_nodes_to_int(nodes):
     --------
     Dict[str, int]
     """
-    name_to_id = dict()
-    sorted_node_set = sorted(list(set(nodes)))
-    for i, name in enumerate(sorted_node_set):
-        name_to_id[name] = i
+    sorted_node_set = sorted(set(nodes))
+    name_to_id = {name: i for i, name in enumerate(sorted_node_set)}
     return name_to_id
 
 
-def _apply_map(edges, mapping):
+def _apply_map(edges, source_mapping, target_mapping):
     """
-    Maps edges according to a node mapping. If `mapping` contains two dicts,
-    `_apply_map` maps source and target nodes separately. Else, if `mapping`
-    contains only one dict, then source and target nodes are mapped according
-    to the same mapping.
+    Maps edges according to new node names specified by source and target maps.
+
+    edges : List[Tuple[str, str]]
+    source_mapping : Dict[str, int]
+    target_mapping : Dict[str, int]
     """
     source_nodes = [edge[0] for edge in edges]
     target_nodes = [edge[1] for edge in edges]
-
-    if len(mapping) == 1:
-        mapped_nodes = [
-            map(mapping[0].get, source_nodes),
-            map(mapping[0].get, target_nodes),
-        ]
-    else:
-        mapped_nodes = [
-            map(mapping[0].get, source_nodes),
-            map(mapping[1].get, target_nodes),
-        ]
+    mapped_nodes = [
+        map(source_mapping.get, source_nodes),
+        map(target_mapping.get, target_nodes),
+    ]
     return list(zip(*mapped_nodes))
 
 
@@ -93,14 +93,18 @@ def map_str_edges(edges, bipartite):
 
     ([(0, 1), (1, 2)], {0: 'a', 1: 'b', 2: 'c'})
     """
+    source_nodes = [edge[0] for edge in edges]
+    target_nodes = [edge[1] for edge in edges]
+
     # Two separate mappings to be used for source and target nodes
     if bipartite:
-        mappings = [_map_nodes_to_int(nodes) for nodes in zip(*edges)]
+        source_map = _map_nodes_to_int(source_nodes)
+        target_map = _map_nodes_to_int(target_nodes)
 
     # One single mapping to be used for both source and target nodes
     if not bipartite:
-        nodes = list(set([node for nodelist in zip(*edges) for node in nodelist]))
-        mappings = [_map_nodes_to_int(nodes)]
+        combined_nodes = list(set(source_nodes + target_nodes))
+        source_map = target_map = _map_nodes_to_int(combined_nodes)
 
-    mapped_edges = _apply_map(edges, mappings)
-    return (mapped_edges, mappings)
+    mapped_edges = _apply_map(edges, source_map, target_map)
+    return (mapped_edges, source_map, target_map)

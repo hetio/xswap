@@ -43,7 +43,6 @@ class BigHashTable
         void remove(int *edge);
 
     private:
-        // std::unordered_set<size_t> hash_table;
         std::set<size_t> hash_table;
 };
 
@@ -56,11 +55,11 @@ class HashTable
         void add(int *edge);
         void remove(int *edge);
         void free_table();
+        BigHashTable big_hash_table;
 
     private:
         bool uses_big;
         EdgeHashTable edge_hash_table;
-        BigHashTable big_hash_table;
 };
 
 struct statsCounter {

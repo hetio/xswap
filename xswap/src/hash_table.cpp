@@ -103,7 +103,6 @@ void BigHashTable::add(int *edge) {
     }
     size_t edge_cantor = cantor_pair(edge);
     hash_table.insert(edge_cantor);
-    // hash_table.emplace(edge_cantor);
 }
 
 void BigHashTable::remove(int *edge) {
