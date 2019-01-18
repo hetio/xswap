@@ -88,7 +88,7 @@ static PyObject* wrap_xswap(PyObject *self, PyObject *args) {
     stats.num_swaps = num_swaps;
 
     // Perform XSwap
-    swap_edges(edges, num_swaps, valid_cond, stats);
+    swap_edges(edges, num_swaps, valid_cond, &stats);
 
     // Get new edges as python list
     PyObject* py_list = edges_to_py_list(edges);

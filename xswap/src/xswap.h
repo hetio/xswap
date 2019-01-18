@@ -79,10 +79,10 @@ struct Conditions {
 
 size_t cantor_pair(int* edge);
 
-void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats);
+void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats);
 
 bool is_valid_edge(int *edge, BitSet edges_set, Conditions cond,
-                   statsCounter stats);
+                   statsCounter *stats);
 
 bool is_valid_swap(int **new_edges, BitSet edges_set, Conditions cond,
-                   statsCounter stats);
+                   statsCounter *stats);
