@@ -1,6 +1,5 @@
-#include <cstdlib>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include "xswap.h"
 
 int CHAR_BITS = 8*sizeof(char);
@@ -12,13 +11,13 @@ size_t cantor_pair(int* edge) {
     return ((source + target) * (source + target + 1) / 2) + target;
 }
 
-EdgeHashTable::EdgeHashTable(int max_source, int max_target) {
+UncompressedBitSet::UncompressedBitSet(int max_source, int max_target) {
     int max_pair[2] = {max_source, max_target};
     max_cantor = cantor_pair(max_pair);
     create_hash_table(max_cantor);
 }
 
-EdgeHashTable::EdgeHashTable(Edges edges) {
+UncompressedBitSet::UncompressedBitSet(Edges edges) {
     int max_pair[2] = {edges.max_source, edges.max_target};
     max_cantor = cantor_pair(max_pair);
     create_hash_table(max_cantor);
@@ -27,14 +26,14 @@ EdgeHashTable::EdgeHashTable(Edges edges) {
     }
 }
 
-bool EdgeHashTable::contains(int *edge) {
+bool UncompressedBitSet::contains(int *edge) {
     size_t edge_cantor = cantor_pair(edge);
     if (edge_cantor > max_cantor)
         throw std::out_of_range("Attempting to check membership for out-of-bounds element.");
     return (bool)get_bit(hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
-void EdgeHashTable::add(int *edge) {
+void UncompressedBitSet::add(int *edge) {
     size_t edge_cantor = cantor_pair(edge);
     if (edge_cantor > max_cantor) {
         throw std::out_of_range("Attempting to add an out-of-bounds element to the hash table.");
@@ -45,7 +44,7 @@ void EdgeHashTable::add(int *edge) {
     set_bit_true(&hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
-void EdgeHashTable::remove(int *edge) {
+void UncompressedBitSet::remove(int *edge) {
     size_t edge_cantor = cantor_pair(edge);
     if (edge_cantor > max_cantor)
         throw std::out_of_range("Attempting to remove an out-of-bounds element.");
@@ -54,12 +53,12 @@ void EdgeHashTable::remove(int *edge) {
     set_bit_false(&hash_table[edge_cantor / CHAR_BITS], edge_cantor % CHAR_BITS);
 }
 
-void EdgeHashTable::free_table() {
+void UncompressedBitSet::free_table() {
     free(hash_table);
 }
 
 // num_elements corresponds to the minimum number of bits that are needed
-void EdgeHashTable::create_hash_table(size_t num_elements) {
+void UncompressedBitSet::create_hash_table(size_t num_elements) {
     // Minimum sufficient number of bytes for the table "ceil(num_elements / CHAR_BITS)"
     size_t bytes_needed = (num_elements + CHAR_BITS - (num_elements % CHAR_BITS)) / CHAR_BITS;
     if (bytes_needed > MAX_MALLOC) {
@@ -73,88 +72,87 @@ void EdgeHashTable::create_hash_table(size_t num_elements) {
  the bit corresponding to cantor pair value 9, call `get_bit` with `word` equal
  to the second bit and `bit_position` equal to 1 (ie. the second bit).
  `word >> (7 - bit_position)` puts the selected bit in the least significant position */
-char EdgeHashTable::get_bit(char word, char bit_position) {
+char UncompressedBitSet::get_bit(char word, char bit_position) {
     return (word >> (7 - bit_position)) & 0x1;
 }
 
-void EdgeHashTable::set_bit_true(char* word, char bit_position) {
+void UncompressedBitSet::set_bit_true(char* word, char bit_position) {
     *word |= (0x1 << (7 - bit_position));
 }
 
-void EdgeHashTable::set_bit_false(char* word, char bit_position) {
+void UncompressedBitSet::set_bit_false(char* word, char bit_position) {
     *word &= ~(0x1 << (7 - bit_position));
 }
 
-BigHashTable::BigHashTable(Edges edges) {
+RoaringBitSet::RoaringBitSet(Edges edges) {
     for (int i = 0; i < edges.num_edges; i++) {
-        int* edge = edges.edge_array[i];
-        add(edge);
+        add(edges.edge_array[i]);
     }
 }
 
-bool BigHashTable::contains(int *edge) {
-    size_t edge_cantor = cantor_pair(edge);
-    return hash_table.count(edge_cantor);
+bool RoaringBitSet::contains(int *edge) {
+    int edge_cantor = cantor_pair(edge);
+    return bitmap.contains(edge_cantor);
 }
 
-void BigHashTable::add(int *edge) {
-    if (contains(edge)) {
+void RoaringBitSet::add(int *edge) {
+    int edge_cantor = cantor_pair(edge);
+    bool success = bitmap.addChecked(edge_cantor);
+    if (!success) {
         throw std::logic_error("Attempting to add an existing element.");
     }
-    size_t edge_cantor = cantor_pair(edge);
-    hash_table.insert(edge_cantor);
 }
 
-void BigHashTable::remove(int *edge) {
-    if (!contains(edge)) {
+void RoaringBitSet::remove(int *edge) {
+    int edge_cantor = cantor_pair(edge);
+    bool success = bitmap.removeChecked(edge_cantor);
+    if (!success) {
         throw std::logic_error("Attempting to remove a nonexisting element.");
     }
-    size_t edge_cantor = cantor_pair(edge);
-    hash_table.erase(edge_cantor);
 }
 
-HashTable::HashTable(Edges edges) {
+BitSet::BitSet(Edges edges) {
     int max_pair[2] = {edges.max_source, edges.max_target};
     size_t max_cantor = cantor_pair(max_pair);
     if (max_cantor < MAX_MALLOC) {
         std::cout << "Using fast hash table\n";
-        uses_big = false;
-        edge_hash_table = EdgeHashTable(edges);
+        use_compressed = false;
+        uncompressed_set = UncompressedBitSet(edges);
     } else {
         std::cout << "Using slow hash table\n";
-        uses_big = true;
-        big_hash_table = BigHashTable(edges);
+        use_compressed = true;
+        compressed_set = RoaringBitSet(edges);
     }
 }
 
-bool HashTable::contains(int *edge) {
-    if (uses_big) {
-        return big_hash_table.contains(edge);
+bool BitSet::contains(int *edge) {
+    if (use_compressed) {
+        return compressed_set.contains(edge);
     } else {
-        return edge_hash_table.contains(edge);
+        return uncompressed_set.contains(edge);
     }
 }
 
-void HashTable::add(int *edge) {
-    if (uses_big) {
-        return big_hash_table.add(edge);
+void BitSet::add(int *edge) {
+    if (use_compressed) {
+        return compressed_set.add(edge);
     } else {
-        return edge_hash_table.add(edge);
+        return uncompressed_set.add(edge);
     }
 }
 
-void HashTable::remove(int *edge) {
-    if (uses_big) {
-        return big_hash_table.remove(edge);
+void BitSet::remove(int *edge) {
+    if (use_compressed) {
+        return compressed_set.remove(edge);
     } else {
-        return edge_hash_table.remove(edge);
+        return uncompressed_set.remove(edge);
     }
 }
 
-void HashTable::free_table() {
-    if (uses_big) {
+void BitSet::free_table() {
+    if (use_compressed) {
         return;
     } else {
-        edge_hash_table.free_table();
+        uncompressed_set.free_table();
     }
 }

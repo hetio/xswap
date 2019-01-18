@@ -20,7 +20,7 @@ long_description = readme_path.read_text()
 
 xswap_cpp_extension = setuptools.Extension(
     'xswap._xswap_backend',
-    sources=['xswap/src/xswap_wrapper.cpp', 'xswap/src/hash_table.cpp', 'xswap/src/xswap.cpp'],
+    sources=['xswap/src/xswap_wrapper.cpp', 'xswap/src/bitset.cpp', 'xswap/src/xswap.cpp', 'xswap/lib/roaring.c'],
     extra_compile_args=["-std=c++11"],
 )
 

@@ -1,5 +1,4 @@
-#include <unordered_set>
-#include <set>
+#include "../lib/roaring.hh"
 
 extern int CHAR_BITS;
 extern unsigned long long int MAX_MALLOC;
@@ -11,13 +10,27 @@ struct Edges {
     int max_target;
 };
 
-// Wrapper class for the two hash table implementations
-class EdgeHashTable
+// Slower bitset
+class RoaringBitSet
 {
     public:
-        EdgeHashTable()  = default;
-        EdgeHashTable(int max_source, int max_target);
-        EdgeHashTable(Edges edges);
+        RoaringBitSet() = default;
+        RoaringBitSet(Edges edges);
+        bool contains(int *edge);
+        void add(int *edge);
+        void remove(int *edge);
+
+    private:
+        Roaring bitmap;
+};
+
+// Faster edge hash table for smaller numbers of edges
+class UncompressedBitSet
+{
+    public:
+        UncompressedBitSet() = default;
+        UncompressedBitSet(int max_source, int max_target);
+        UncompressedBitSet(Edges edges);
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
@@ -32,34 +45,20 @@ class EdgeHashTable
         void set_bit_false(char* word, char bit_position);
 };
 
-// Slower edge hash table based on C++ standard library that can handle more edges
-class BigHashTable
+// Wrapper class for the two hash table implementations
+class BitSet
 {
     public:
-        BigHashTable() = default;
-        BigHashTable(Edges edges);
-        bool contains(int *edge);
-        void add(int *edge);
-        void remove(int *edge);
-
-    private:
-        std::set<size_t> hash_table;
-};
-
-// Faster edge hash table for smaller numbers of edges
-class HashTable
-{
-    public:
-        HashTable(Edges edges);
+        BitSet(Edges edges);
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
         void free_table();
-        BigHashTable big_hash_table;
+        UncompressedBitSet uncompressed_set;
 
     private:
-        bool uses_big;
-        EdgeHashTable edge_hash_table;
+        bool use_compressed;
+        RoaringBitSet compressed_set;
 };
 
 struct statsCounter {
@@ -82,8 +81,8 @@ size_t cantor_pair(int* edge);
 
 void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats);
 
-bool is_valid_edge(int *edge, HashTable edges_set, Conditions cond,
+bool is_valid_edge(int *edge, BitSet edges_set, Conditions cond,
                    statsCounter stats);
 
-bool is_valid_swap(int **new_edges, HashTable edges_set, Conditions cond,
+bool is_valid_swap(int **new_edges, BitSet edges_set, Conditions cond,
                    statsCounter stats);
