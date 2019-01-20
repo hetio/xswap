@@ -100,7 +100,13 @@ static PyObject* wrap_xswap(PyObject *self, PyObject *args) {
     PyObject* return_tuple = PyTuple_New(2);
     PyTuple_SET_ITEM(return_tuple, 0, py_list);
     PyTuple_SET_ITEM(return_tuple, 1, stats_py_dict);
+    for (int i = 0; i < edges.num_edges; i++) {
+        free(edges.edge_array[i]);
+    }
     free(edges.edge_array);
+    for (int i = 0; i < valid_cond.excluded_edges.num_edges; i++) {
+        free(valid_cond.excluded_edges.edge_array[i]);
+    }
     free(valid_cond.excluded_edges.edge_array);
     return return_tuple;
 }

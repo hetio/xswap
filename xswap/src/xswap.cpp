@@ -42,6 +42,7 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats
             edges_set.add(new_edge_b);
         }
     }
+    edges_set.free_table();
 }
 
 bool is_valid_edge(int *new_edge, BitSet edges_set, Conditions valid_conditions,
