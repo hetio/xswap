@@ -1,7 +1,7 @@
 from xswap.xswap import permute_edge_list
 from xswap import preprocessing
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 __all__ = [
     permute_edge_list,
