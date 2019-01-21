@@ -2,7 +2,7 @@
 #include "xswap.h"
 
 void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats) {
-    // Initialize hash table for possible edges
+    // Initialize bitset for possible edges
     BitSet edges_set = BitSet(edges);
 
     // Initialize unbiased random number generator
@@ -42,7 +42,7 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats
             edges_set.add(new_edge_b);
         }
     }
-    edges_set.free_table();
+    edges_set.free_array();
 }
 
 bool is_valid_edge(int *new_edge, BitSet edges_set, Conditions valid_conditions,

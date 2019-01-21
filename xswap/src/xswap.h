@@ -24,7 +24,7 @@ class RoaringBitSet
         Roaring bitmap;
 };
 
-// Faster edge hash table for smaller numbers of edges
+// Faster edge bitset for smaller numbers of edges
 class UncompressedBitSet
 {
     public:
@@ -34,18 +34,18 @@ class UncompressedBitSet
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
-        void free_table();
+        void free_array();
 
     private:
-        char* hash_table;
+        char* bitset;
         size_t max_cantor;
-        void create_hash_table(size_t hash_size);
+        void create_bitset(size_t num_elements);
         char get_bit(char word, char bit_position);
         void set_bit_true(char* word, char bit_position);
         void set_bit_false(char* word, char bit_position);
 };
 
-// Wrapper class for the two hash table implementations
+// Wrapper class for the two bitset implementations
 class BitSet
 {
     public:
@@ -53,7 +53,7 @@ class BitSet
         bool contains(int *edge);
         void add(int *edge);
         void remove(int *edge);
-        void free_table();
+        void free_array();
         UncompressedBitSet uncompressed_set;
 
     private:
