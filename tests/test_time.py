@@ -10,7 +10,7 @@ test_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
 
 def load_edges():
     edges_url = "https://github.com/greenelab/xswap/raw/{}/{}".format(
-        "51cad9392880db08a4c5870f08a670c52877e78f", "graphs/GiG_edges.txt")
+        "8c31b4cbdbbf2cfa5018b1277bbd0e9f6263e573", "graphs/GiG_edges_reduced.txt")
     response = requests.get(edges_url)
     edges = list()
     for edge in response.iter_lines():
@@ -25,9 +25,10 @@ def test_time():
     t1 = time.time()
     new_edges, stats = xswap.permute_edge_list(edges)
     t2 = time.time()
-    print(str(t2 - t1) + "  seconds elapsed.")
+    time_diff = t2 - t1
+    print("{:.4f}  seconds elapsed.".format(time_diff))
     assert edges != new_edges
-    assert t2 - t1 < 5
+    assert time_diff < 5
 
     num_repeats = 0
     old_set = set(edges)
@@ -38,4 +39,4 @@ def test_time():
     p_unch = num_repeats / len(edges)
     with open(test_directory + 'permutation_stats.txt', 'w') as f:
         f.write('Runtime: {:.3f} sec. {:.3f} percent unchanged of {} total edges after '
-                '{} swap attempts\n'.format(t2 - t1, p_unch, len(edges), 10*len(edges)))
+                '{} swap attempts\n'.format(time_diff, p_unch, len(edges), 10*len(edges)))

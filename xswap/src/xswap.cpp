@@ -1,9 +1,9 @@
 #include <random>
 #include "xswap.h"
 
-void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats) {
-    // Initialize hash table for possible edges
-    EdgeHashTable edges_set = EdgeHashTable(edges);
+void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats) {
+    // Initialize bitset for possible edges
+    BitSet edges_set = BitSet(edges);
 
     // Initialize unbiased random number generator
     std::mt19937 rng(cond.seed);
@@ -16,7 +16,7 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
         int edge_index_b = uni(rng);
 
         if (edge_index_a == edge_index_b) {
-            stats.same_edge += 1;
+            stats->same_edge += 1;
             continue;
         }
 
@@ -38,43 +38,43 @@ void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter stats)
             edge_a[1] = edge_b[1];
             edge_b[1] = temp_target;
 
-            edges_set.add(edge_a);
-            edges_set.add(edge_b);
+            edges_set.add(new_edge_a);
+            edges_set.add(new_edge_b);
         }
     }
-    edges_set.free_table();
+    edges_set.free_array();
 }
 
-bool is_valid_edge(int *new_edge, EdgeHashTable edges_set, Conditions valid_conditions,
-                   statsCounter stats) {
+bool is_valid_edge(int *new_edge, BitSet edges_set, Conditions valid_conditions,
+                   statsCounter *stats) {
     // New edge would be a self-loop
     if (!valid_conditions.allow_self_loop && new_edge[0] == new_edge[1]) {
-        stats.self_loop += 1;
+        stats->self_loop += 1;
         return false;
     }
     // New edge already exists
     if (edges_set.contains(new_edge)) {
-        stats.duplicate += 1;
+        stats->duplicate += 1;
         return false;
     }
     // Undirected and reverse of new edge already exists
     int reversed[2] = { new_edge[1], new_edge[0] };
     if (!valid_conditions.allow_antiparallel && edges_set.contains(reversed)) {
-        stats.undir_duplicate += 1;
+        stats->undir_duplicate += 1;
         return false;
     }
     for (int i = 0; i < valid_conditions.excluded_edges.num_edges; i++) {
         if (valid_conditions.excluded_edges.edge_array[i][0] == new_edge[0] &&
             valid_conditions.excluded_edges.edge_array[i][1] == new_edge[1]) {
-            stats.excluded += 1;
+            stats->excluded += 1;
             return false;
         }
     }
     return true;
 }
 
-bool is_valid_swap(int **new_edges, EdgeHashTable edges_set, Conditions valid_conditions,
-                   statsCounter stats) {
+bool is_valid_swap(int **new_edges, BitSet edges_set, Conditions valid_conditions,
+                   statsCounter *stats) {
     for (int i = 0; i < 2; i++) {
         bool is_valid = is_valid_edge(new_edges[i], edges_set, valid_conditions, stats);
         if (!is_valid) {

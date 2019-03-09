@@ -20,7 +20,7 @@ long_description = readme_path.read_text()
 
 xswap_cpp_extension = setuptools.Extension(
     'xswap._xswap_backend',
-    sources=['xswap/xswap_wrapper.cpp', 'xswap/hash_table.cpp', 'xswap/xswap.cpp'],
+    sources=['xswap/src/xswap_wrapper.cpp', 'xswap/src/bitset.cpp', 'xswap/src/xswap.cpp', 'xswap/lib/roaring.c'],
     extra_compile_args=["-std=c++11"],
 )
 
@@ -42,5 +42,5 @@ setuptools.setup(
     python_requires='>=3.5',
 
     ext_modules=[xswap_cpp_extension],
-    packages=['xswap'],
+    packages=setuptools.find_packages(),
 )
