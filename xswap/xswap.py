@@ -42,7 +42,13 @@ def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool =
     """
     max_source = max([i[0] for i in edge_list])
     max_target = max([i[1] for i in edge_list])
+    max_source, max_target = sorted([max_source, max_target])
+
     num_swaps = int(multiplier * len(edge_list))
+
+    if len(edge_list) != len(set(edge_list)):
+        raise ValueError("Edge list contained duplicate edges.")
+
     new_edges, stats = xswap._xswap_backend._xswap(
         edge_list, list(excluded_edges), max_source, max_target, allow_self_loops,
         allow_antiparallel, num_swaps, seed)
