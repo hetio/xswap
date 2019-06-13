@@ -1,4 +1,3 @@
-#include <Python.h>
 #include "xswap.h"
 
 #define XSWAP_MODULE
@@ -63,17 +62,17 @@ static PyObject* stats_to_py_dict(statsCounter& stats) {
 static PyObject* wrap_xswap(PyObject *self, PyObject *args) {
     // Get arguments from python and compute quantities where needed
     PyObject *py_edges, *py_excluded_edges;
-    int max_source, max_target, num_swaps, seed, allow_self_loop, allow_antiparallel;
-    int parsed_successfully = PyArg_ParseTuple(args, "OOiippii", &py_edges,
-        &py_excluded_edges, &max_source, &max_target, &allow_self_loop,
-        &allow_antiparallel, &num_swaps, &seed);
+    int max_id, num_swaps, seed, allow_self_loop, allow_antiparallel;
+    unsigned long long int max_malloc;
+    int parsed_successfully = PyArg_ParseTuple(args, "OOippiiK", &py_edges,
+        &py_excluded_edges, &max_id, &allow_self_loop,
+        &allow_antiparallel, &num_swaps, &seed, &max_malloc);
     if (!parsed_successfully)
         return NULL;
 
     // Load edges from python list
     Edges edges = py_list_to_edges(py_edges);
-    edges.max_source = max_source;
-    edges.max_target = max_target;
+    edges.max_id = max_id;
     Edges excluded_edges = py_list_to_edges(py_excluded_edges);
 
     // Set the conditions under which new edges are accepted
@@ -88,7 +87,7 @@ static PyObject* wrap_xswap(PyObject *self, PyObject *args) {
     stats.num_swaps = num_swaps;
 
     // Perform XSwap
-    swap_edges(edges, num_swaps, valid_cond, &stats);
+    swap_edges(edges, num_swaps, valid_cond, &stats, (unsigned long long int)max_malloc);
 
     // Get new edges as python list
     PyObject* py_list = edges_to_py_list(edges);

@@ -3,7 +3,6 @@
 #include "xswap.h"
 
 int CHAR_BITS = 8*sizeof(char);
-unsigned long long int MAX_MALLOC = 4000000000;
 
 size_t cantor_pair(int* edge) {
     size_t source = edge[0];
@@ -11,16 +10,16 @@ size_t cantor_pair(int* edge) {
     return ((source + target) * (source + target + 1) / 2) + target;
 }
 
-UncompressedBitSet::UncompressedBitSet(int max_source, int max_target) {
-    int max_pair[2] = {max_source, max_target};
+UncompressedBitSet::UncompressedBitSet(int max_id, unsigned long long int max_malloc) {
+    int max_pair[2] = {max_id, max_id};
     max_cantor = cantor_pair(max_pair);
-    create_bitset(max_cantor);
+    create_bitset(max_cantor, max_malloc);
 }
 
-UncompressedBitSet::UncompressedBitSet(Edges edges) {
-    int max_pair[2] = {edges.max_source, edges.max_target};
+UncompressedBitSet::UncompressedBitSet(Edges edges, unsigned long long int max_malloc) {
+    int max_pair[2] = {edges.max_id, edges.max_id};
     max_cantor = cantor_pair(max_pair);
-    create_bitset(max_cantor);
+    create_bitset(max_cantor, max_malloc);
     for (int i = 0; i < edges.num_edges; i++) {
         add(edges.edge_array[i]);
     }
@@ -58,10 +57,11 @@ void UncompressedBitSet::free_array() {
 }
 
 // num_elements corresponds to the minimum number of bits that are needed
-void UncompressedBitSet::create_bitset(size_t num_elements) {
+void UncompressedBitSet::create_bitset(size_t num_elements,
+                                       unsigned long long int max_malloc) {
     // Minimum sufficient number of bytes for the array "ceil(num_elements / CHAR_BITS)"
     size_t bytes_needed = (num_elements + CHAR_BITS - (num_elements % CHAR_BITS)) / CHAR_BITS;
-    if (bytes_needed > MAX_MALLOC) {
+    if (bytes_needed > max_malloc) {
         throw std::runtime_error("Bitset requires too much memory.");
     }
     bitset = (char*)calloc(bytes_needed, 1);
@@ -111,18 +111,24 @@ void RoaringBitSet::remove(int *edge) {
     }
 }
 
-BitSet::BitSet(Edges edges) {
-    int max_pair[2] = {edges.max_source, edges.max_target};
+BitSet::BitSet(Edges edges, unsigned long long int max_malloc) {
+    int max_pair[2] = {edges.max_id, edges.max_id};
     size_t max_cantor = cantor_pair(max_pair);
-    if (max_cantor < MAX_MALLOC) {
-        std::cout << "Using fast bitset\n";
+
+    if (max_cantor < max_malloc) {
         use_compressed = false;
-        uncompressed_set = UncompressedBitSet(edges);
+        uncompressed_set = UncompressedBitSet(edges, max_malloc);
     } else {
-        std::cout << "Using slow bitset\n";
+        runtime_warning_roaring();
         use_compressed = true;
         compressed_set = RoaringBitSet(edges);
     }
+}
+
+PyObject *BitSet::runtime_warning_roaring(void) {
+    // Roaring bitset is significantly slower, but used because of large network sizes
+    PyErr_WarnEx(PyExc_RuntimeWarning, "Using Roaring bitset because of the large number of edges.", 2);
+    return NULL;
 }
 
 bool BitSet::contains(int *edge) {
