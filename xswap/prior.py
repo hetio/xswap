@@ -141,42 +141,60 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     Returns
     -------
     prior_df : pandas.DataFrame
-        TODO: Explain `source_id` and `target_id` as used here.
+        Columns are the following:
+        [source_id, target_id, edge, source_degree, target_degree, xswap_prior]
     """
+    # Compute the number of occurrences of each edge across permutations
     edge_counter = compute_xswap_occurrence_matrix(
         edge_list=edge_list, n_permutations=n_permutations, shape=shape,
         allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
         swap_multiplier=swap_multiplier, initial_seed=initial_seed)
 
+    # Compute the adjacency matrix of the original (unpermuted) network
+    original_edges = xswap.network_formats.edges_to_matrix(
+        edge_list, add_reverse_edges=(not allow_antiparallel), shape=shape,
+        dtype=bool, sparse=True)
+
     # Setup DataFrame for recording prior data
     prior_df = pd.DataFrame({
         'source_id': np.repeat(np.arange(shape[0], dtype=np.uint16), shape[1]),
         'target_id': np.tile(np.arange(shape[1], dtype=np.uint16), shape[0]),
+        'edge': original_edges.toarray().flatten(),
         'num_permuted_edges': edge_counter.toarray().flatten(),
     })
-    del edge_counter
+    del edge_counter, original_edges
 
-    # Implement degree grouping to increase effective number of permutations
-    prior_df = (
+    prior_df['source_degree'] = (
         prior_df
-        .assign(
-            # Presence of an edge in the original network
-            edge=xswap.network_formats.edges_to_matrix(
-                edge_list, add_reverse_edges=(not allow_antiparallel), shape=shape,
-                dtype=bool, sparse=True).toarray().flatten(),
-            source_degree=lambda df: df.groupby('source_id').transform(sum)['edge'],
-            target_degree=lambda df: df.groupby('target_id').transform(sum)['edge'],
-            # The effective number of permutations after degree-grouping
-            num_dgp=lambda df: n_permutations * df.groupby(['source_id', 'target_id'])
-                                                  .transform(len)['edge'],
-            # The number of edges found in permuted networks (using DGP)
-            dgp_edge_count=lambda df: df.groupby(['source_degree', 'target_degree'])
-                                        .transform(sum)['num_permuted_edges'],
-            xswap_prior=lambda df: df['dgp_edge_count'] / df['num_dgp']
-        )
-        .filter(items=['source_id', 'target_id', 'source_degree',
-                       'target_degree', 'edge', 'num_dgp', 'xswap_prior'])
+        .groupby('source_id')
+        .transform(sum)['edge']
+        .astype(np.uint32)
     )
+
+    prior_df['target_degree'] = (
+        prior_df
+        .groupby('target_id')
+        .transform(sum)['edge']
+        .astype(np.uint32)
+    )
+
+    # The number of edges that occurred across all node pairs with the same
+    # `source_degree` and `target_degree`
+    prior_df['dgp_edge_count'] = (
+        prior_df
+        .groupby(['source_degree', 'target_degree'])
+        .transform(sum)['num_permuted_edges']
+        .astype(np.uint32)
+    )
+    del prior_df['num_permuted_edges']
+
+    # The effective number of permutations for every node pair, incorporating
+    # degree-grouping
+    prior_df['num_dgp'] = (n_permutations * prior_df.groupby(['source_id', 'target_id'])
+                                                    .transform(len)['edge'])
+
+    prior_df['xswap_prior'] = prior_df['dgp_edge_count'] / prior_df['num_dgp']
+    del prior_df['dgp_edge_count'], prior_df['num_dgp']
     return prior_df
 
 
