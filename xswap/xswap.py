@@ -6,7 +6,7 @@ import xswap._xswap_backend
 def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool = False,
                       allow_antiparallel: bool = False, multiplier: float = 10,
                       excluded_edges: Set[Tuple[int, int]] = set(), seed: int = 0,
-                      max_malloc: int = 400000000):
+                      max_malloc: int = 4000000000):
     """
     Permute the edges of a graph using the XSwap method given by Hanhijärvi,
     et al. (doi.org/f3mn58). XSwap is a degree-preserving network randomization
