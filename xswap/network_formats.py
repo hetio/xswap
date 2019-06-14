@@ -64,6 +64,7 @@ def edges_to_matrix(edge_list: List[Tuple[int, int]], add_reverse_edges: bool,
 
     if add_reverse_edges:
         matrix = (matrix + matrix.T) > 0
+        matrix = matrix.astype(dtype)
 
     if not sparse:
         matrix = matrix.toarray()

@@ -34,6 +34,9 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
         otherwise) using `xswap.preprocessing.map_str_edges`.
     n_permutations : int
         The number of permuted networks used to compute the empirical XSwap prior
+    shape : Tuple[int, int]
+        The shape of the matrix to be returned. In other words, a tuple of the
+        number of source and target nodes.
     allow_self_loops : bool
         Whether to allow edges like (0, 0). In the case of bipartite graphs,
         such an edge represents a connection between two distinct nodes, while
@@ -93,16 +96,59 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     """
     Compute the XSwap prior for every potential edge in the network. Uses
     degree-grouping to maximize the effective number of permutations for each
-    node pair.
+    node pair. That is, node pairs with the same source and target degrees can
+    be grouped when computing the XSwap prior, allowing there to be more
+    permutations for some node pairs than `n_permutations`.
 
     Note that the mechanics of this function are separated to minimize memory use.
+
+    Parameters
+    ----------
+    edge_list : List[Tuple[int, int]]
+        Edge list representing the graph whose XSwap edge priors are to be
+        computed. Tuples contain integer values representing nodes. No value
+        should be greater than C++'s `INT_MAX`, in this case 2_147_483_647.
+        An adjacency matrix will be created assuming that a node's value is its
+        index in the matrix. If not, map edges (identifiers can be string or
+        otherwise) using `xswap.preprocessing.map_str_edges`.
+    n_permutations : int
+        The number of permuted networks used to compute the empirical XSwap prior
+    shape : Tuple[int, int]
+        The shape of the matrix to be returned. In other words, a tuple of the
+        number of source and target nodes.
+    allow_self_loops : bool
+        Whether to allow edges like (0, 0). In the case of bipartite graphs,
+        such an edge represents a connection between two distinct nodes, while
+        in other graphs it may represent an edge from a node to itself, in which
+        case an edge may or may not be meaningful depending on context.
+    allow_antiparallel : bool
+        Whether to allow simultaneous edges like (0, 1) and (1, 0). In the case
+        of bipartite graphs, these edges represent two connections between four
+        distinct nodes, while for other graphs, these may be connections between
+        the same two nodes.
+    swap_multiplier : float
+        The number of edge swap attempts is determined by the product of the
+        number of existing edges and multiplier. For example, if five edges are
+        passed and multiplier is set to 10, 50 swaps will be attempted. Non-integer
+        products will be rounded down to the nearest integer.
+    initial_seed : int
+        Random seed that will be passed to the C++ Mersenne Twister 19937 random
+        number generator. `initial_seed` will be used for the first permutation,
+        and the seed used for each subsequent permutation will be incremented by
+        one. For example, if `initial_seed` is 0 and `n_permutations` is 2, then
+        the two permutations will pass seeds 0 and 1, respectively.
+
+    Returns
+    -------
+    prior_df : pandas.DataFrame
+        TODO: Explain `source_id` and `target_id` as used here.
     """
     edge_counter = compute_xswap_occurrence_matrix(
         edge_list=edge_list, n_permutations=n_permutations, shape=shape,
         allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
         swap_multiplier=swap_multiplier, initial_seed=initial_seed)
 
-    # Setup
+    # Setup DataFrame for recording prior data
     prior_df = pd.DataFrame({
         'source_id': np.repeat(np.arange(shape[0], dtype=np.uint16), shape[1]),
         'target_id': np.tile(np.arange(shape[1], dtype=np.uint16), shape[0]),
@@ -132,3 +178,30 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
                        'target_degree', 'edge', 'num_dgp', 'xswap_prior'])
     )
     return prior_df
+
+
+def approximate_xswap_prior(source_degree, target_degree, num_edges):
+    """
+    Approximate the XSwap prior by assuming that the XSwap Markov Chain is stationary.
+    While this is not the case in reality, some networks' priors can be estimated
+    very well using this equation.
+
+    Parameters
+    ----------
+    source_degree : int, float, numpy.array, or pandas.Series
+        The source degree for a single node pair or a number of source degrees.
+        The type of object passed should match `target_degree`.
+    target_degree : int, float, numpy.array, or pandas.Series
+        The target degree for a single node pair or a number of target degrees.
+        The type of object passed should match `source_degree`.
+    num_edges : int or float
+        The total number of edges in the network
+
+    Returns
+    -------
+    approximate_prior : float, numpy.array, or pandas.Series
+        Output type matches the types of `source_degree` and `target_degree`.
+    """
+    return source_degree * target_degree / (
+        source_degree * target_degree + num_edges - source_degree - target_degree + 1
+    )
