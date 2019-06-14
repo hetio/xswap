@@ -1,11 +1,14 @@
 language: python
 python:
-  - "3.5"
-  - "3.6"
-  - "3.7-dev"
+  - 3.5
+  - 3.6
+  - 3.7-dev
 install:
-  - sudo apt-get install python3-dev
   - pip install -r tests-require.txt
+addons:
+  apt:
+    packages:
+      - python3-dev
 compiler:
   - g++
 script:
