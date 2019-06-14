@@ -6,9 +6,9 @@ import xswap.network_formats
 
 
 @pytest.mark.parametrize('matrix,correct_edges,include_reverse_edges', [
-    (numpy.array([1,0,0,0],[0,0,1,0],[0,0,0,1]), [(0, 0), (1, 2), (2, 3)], False),
-    (numpy.array([1,0,0],[0,0,1],[0,1,1]), [(0, 0), (1, 2), (2, 2)], False),
-    (numpy.array([1,0,0],[0,0,1],[0,1,1]), [(0, 0), (1, 2), (2, 2), (2, 2)], True),
+    (numpy.array([[1,0,0,0],[0,0,1,0],[0,0,0,1]]), [(0, 0), (1, 2), (2, 3)], False),
+    (numpy.array([[1,0,0],[0,0,1],[0,1,1]]), [(0, 0), (1, 2), (2, 2)], False),
+    (numpy.array([[1,0,0],[0,0,1],[0,1,1]]), [(0, 0), (1, 2), (2, 2), (2, 2)], True),
 ])
 def test_matrix_to_edges(matrix, correct_edges, include_reverse_edges):
     edges = xswap.network_formats.edges_to_matrix(matrix, include_reverse_edges)
