@@ -142,19 +142,20 @@ bool test_insert_existing(UncompressedBitSet edges_set) {
 }
 
 main(int argc, char const *argv[]) {
+    unsigned long long int max_malloc = 4000000;
     int num_tests = 7;
     bool test_passed[num_tests];
 
-    UncompressedBitSet edges_set = UncompressedBitSet(3, 3);
+    UncompressedBitSet edges_set = UncompressedBitSet(3, max_malloc);
     test_passed[0] = test_add(edges_set);
-    edges_set = UncompressedBitSet(3, 3);  // Reset so functions don't interfere
+    edges_set = UncompressedBitSet(3, max_malloc);  // Reset so functions don't interfere
     test_passed[1] = test_remove(edges_set);
     test_passed[2] = test_oob_insert(edges_set);
     test_passed[3] = test_oob_access(edges_set);
     test_passed[4] = test_oob_remove(edges_set);
-    edges_set = UncompressedBitSet(3, 3);
+    edges_set = UncompressedBitSet(3, max_malloc);
     test_passed[5] = test_remove_nonexistent(edges_set);
-    edges_set = UncompressedBitSet(3, 3);
+    edges_set = UncompressedBitSet(3, max_malloc);
     test_passed[6] = test_insert_existing(edges_set);
 
     bool all_tests_passed = true;
