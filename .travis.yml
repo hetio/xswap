@@ -15,6 +15,7 @@ script:
   - python setup.py build
   - pip install .
   - pytest tests/
+  - ls /usr/include/
   - g++ tests/test_bitset.cpp xswap/src/bitset.cpp xswap/lib/roaring.c -o tests/test_bitset.o -std=c++11 -I/usr/include/python3.6m
   - ./tests/test_bitset.o
   - g++ tests/test_roaring.cpp xswap/lib/roaring.c xswap/src/bitset.cpp -o tests/test_roaring.o -std=c++11 -I/usr/include/python3.6m
