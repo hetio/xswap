@@ -17,10 +17,12 @@ script:
   - python setup.py build
   - pip install .
   - pytest tests/
-  - g++ `pkg-config --cflags --libs python3` tests/test_bitset.cpp xswap/src/xswap.h \
-    xswap/src/bitset.cpp xswap/lib/roaring.c -o tests/test_bitset.o -std=c++11
+  - >
+      g++ `pkg-config --cflags --libs python3` tests/test_bitset.cpp xswap/src/xswap.h
+      xswap/src/bitset.cpp xswap/lib/roaring.c -o tests/test_bitset.o -std=c++11
   - ./tests/test_bitset.o
-  - g++ `pkg-config --cflags --libs python3` tests/test_roaring.cpp xswap/src/xswap.h \
-    xswap/lib/roaring.c xswap/src/bitset.cpp -o tests/test_roaring.o -std=c++11
+  - >
+      g++ `pkg-config --cflags --libs python3` tests/test_roaring.cpp xswap/src/xswap.h
+      xswap/lib/roaring.c xswap/src/bitset.cpp -o tests/test_roaring.o -std=c++11
   - ./tests/test_roaring.o
   - cat tests/permutation_stats.txt
