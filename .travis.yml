@@ -4,6 +4,7 @@ python:
   - "3.6"
   - "3.7-dev"
 install:
+  - sudo apt-get install python3-dev
   - pip install -r tests-require.txt
 compiler:
   - g++
