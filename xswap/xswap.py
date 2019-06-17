@@ -5,7 +5,8 @@ import xswap._xswap_backend
 
 def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool = False,
                       allow_antiparallel: bool = False, multiplier: float = 10,
-                      excluded_edges: Set[Tuple[int, int]] = set(), seed: int = 0):
+                      excluded_edges: Set[Tuple[int, int]] = set(), seed: int = 0,
+                      max_malloc: int = 4000000000):
     """
     Permute the edges of a graph using the XSwap method given by Hanhijärvi,
     et al. (doi.org/f3mn58). XSwap is a degree-preserving network randomization
@@ -39,18 +40,38 @@ def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool =
     seed : int
         Random seed that will be passed to the C++ Mersenne Twister 19937 random
         number generator.
+    max_malloc : int (`unsigned long long int` in C)
+        The maximum amount of memory to be allocated using `malloc` when making
+        a bitset to hold edges. An uncompressed bitset is implemented for
+        holding edges that is significantly faster than alternatives. However,
+        it is memory-inefficient and will not be used if more memory is required
+        than `max_malloc`. Above the threshold, a Roaring bitset will be used.
+
+    Returns
+    -------
+    new_edges : List[Tuple[int, int]]
+        Edge list of a permutation of the network given as `edge_list`
+    stats : Dict[str, int]
+        Information about the permutation performed. Gives the following information:
+        `swap_attempts` - number of attempted swaps
+        `same_edge` - number of swaps rejected because one edge was chosen twice
+        `self_loop` - number of swaps rejected because new edge is a self-loop
+        'duplicate` - number of swaps rejected because new edge already exists
+        `undir_duplicate` - number of swaps rejected because the network is
+            undirected and the reverse of the new edge already exists
+        `excluded` - number of swaps rejected because new edge was among excluded
     """
-    max_source = max([i[0] for i in edge_list])
-    max_target = max([i[1] for i in edge_list])
-    max_source, max_target = sorted([max_source, max_target])
-
-    num_swaps = int(multiplier * len(edge_list))
-
     if len(edge_list) != len(set(edge_list)):
         raise ValueError("Edge list contained duplicate edges.")
 
+    # Number of attempted XSwap swaps
+    num_swaps = int(multiplier * len(edge_list))
+
+    # Compute the maximum node ID (for creating the bitset)
+    max_id = max(map(max, edge_list))
+
     new_edges, stats = xswap._xswap_backend._xswap(
-        edge_list, list(excluded_edges), max_source, max_target, allow_self_loops,
-        allow_antiparallel, num_swaps, seed)
+        edge_list, list(excluded_edges), max_id, allow_self_loops,
+        allow_antiparallel, num_swaps, seed, max_malloc)
 
     return new_edges, stats

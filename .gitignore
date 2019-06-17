@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 tests/permutation_stats.txt
 tests/*.o
+**.so
+xswap.egg-info/

@@ -1,9 +1,10 @@
 #include <random>
 #include "xswap.h"
 
-void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats) {
+void swap_edges(Edges edges, int num_swaps, Conditions cond, statsCounter *stats,
+                unsigned long long int max_malloc) {
     // Initialize bitset for possible edges
-    BitSet edges_set = BitSet(edges);
+    BitSet edges_set = BitSet(edges, max_malloc);
 
     // Initialize unbiased random number generator
     std::mt19937 rng(cond.seed);
