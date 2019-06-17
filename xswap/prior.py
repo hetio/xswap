@@ -15,7 +15,8 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
                                     allow_self_loops: bool = False,
                                     allow_antiparallel: bool = False,
                                     swap_multiplier: float = 10,
-                                    initial_seed: int = 0):
+                                    initial_seed: int = 0,
+                                    max_malloc: int = 4000000000):
     """
     Compute the XSwap prior probability for every node pair in a network. The
     XSwap prior is the probability of a node pair having an edge between them in
@@ -58,6 +59,12 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
         and the seed used for each subsequent permutation will be incremented by
         one. For example, if `initial_seed` is 0 and `n_permutations` is 2, then
         the two permutations will pass seeds 0 and 1, respectively.
+    max_malloc : int (`unsigned long long int` in C)
+        The maximum amount of memory to be allocated using `malloc` when making
+        a bitset to hold edges. An uncompressed bitset is implemented for
+        holding edges that is significantly faster than alternatives. However,
+        it is memory-inefficient and will not be used if more memory is required
+        than `max_malloc`. Above the threshold, a Roaring bitset will be used.
 
     Returns
     -------
@@ -71,16 +78,14 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
 
     num_swaps = int(swap_multiplier * len(edge_list))
 
-    # Set max_source and max_target to their mutual maximum to ensure enough
-    # space is allocated for the bitset
-    max_source = max_target = max(map(max, edge_list))
+    max_id = max(map(max, edge_list))
 
     edge_counter = scipy.sparse.csc_matrix(shape, dtype=int)
 
     for i in range(n_permutations):
         permuted_edges, stats = xswap._xswap_backend._xswap(
-            edge_list, [], max_source, max_target, allow_self_loops,
-            allow_antiparallel, num_swaps, initial_seed + i)
+            edge_list, [], max_id, allow_self_loops, allow_antiparallel,
+            num_swaps, initial_seed + i, max_malloc)
         permuted_matrix = xswap.network_formats.edges_to_matrix(
             permuted_edges, add_reverse_edges=(not allow_antiparallel),
             shape=shape, dtype=int, sparse=True)
@@ -90,9 +95,10 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
 
 
 def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
-                         shape: Tuple[int, int], allow_self_loops: bool=False,
-                         allow_antiparallel: bool=False, swap_multiplier: int=10,
-                         initial_seed: int=0):
+                         shape: Tuple[int, int], allow_self_loops: bool = False,
+                         allow_antiparallel: bool = False,
+                         swap_multiplier: int = 10, initial_seed: int = 0,
+                         max_malloc: int = 4000000000):
     """
     Compute the XSwap prior for every potential edge in the network. Uses
     degree-grouping to maximize the effective number of permutations for each
@@ -137,6 +143,12 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         and the seed used for each subsequent permutation will be incremented by
         one. For example, if `initial_seed` is 0 and `n_permutations` is 2, then
         the two permutations will pass seeds 0 and 1, respectively.
+    max_malloc : int (`unsigned long long int` in C)
+        The maximum amount of memory to be allocated using `malloc` when making
+        a bitset to hold edges. An uncompressed bitset is implemented for
+        holding edges that is significantly faster than alternatives. However,
+        it is memory-inefficient and will not be used if more memory is required
+        than `max_malloc`. Above the threshold, a Roaring bitset will be used.
 
     Returns
     -------
@@ -148,7 +160,8 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     edge_counter = compute_xswap_occurrence_matrix(
         edge_list=edge_list, n_permutations=n_permutations, shape=shape,
         allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
-        swap_multiplier=swap_multiplier, initial_seed=initial_seed)
+        swap_multiplier=swap_multiplier, initial_seed=initial_seed,
+        max_malloc=max_malloc)
 
     # Compute the adjacency matrix of the original (unpermuted) network
     original_edges = xswap.network_formats.edges_to_matrix(
@@ -156,44 +169,38 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         dtype=bool, sparse=True)
 
     # Setup DataFrame for recording prior data
-    prior_df = pd.DataFrame({
-        'source_id': np.repeat(np.arange(shape[0], dtype=np.uint16), shape[1]),
-        'target_id': np.tile(np.arange(shape[1], dtype=np.uint16), shape[0]),
+    prior_df = pandas.DataFrame({
+        'source_id': numpy.repeat(numpy.arange(shape[0], dtype=numpy.uint16), shape[1]),
+        'target_id': numpy.tile(numpy.arange(shape[1], dtype=numpy.uint16), shape[0]),
         'edge': original_edges.toarray().flatten(),
         'num_permuted_edges': edge_counter.toarray().flatten(),
     })
     del edge_counter, original_edges
 
-    prior_df['source_degree'] = (
-        prior_df
-        .groupby('source_id')
-        .transform(sum)['edge']
-        .astype(np.uint32)
-    )
+    prior_df = prior_df.assign(
+        source_degree=lambda df: df.groupby('source_id')
+                                   .transform(sum)['edge']
+                                   .astype(numpy.uint32),
+        target_degree=lambda df: df.groupby('target_id')
+                                   .transform(sum)['edge']
+                                   .astype(numpy.uint32),
 
-    prior_df['target_degree'] = (
-        prior_df
-        .groupby('target_id')
-        .transform(sum)['edge']
-        .astype(np.uint32)
-    )
+        # The number of edges that occurred across all node pairs with the same
+        # `source_degree` and `target_degree`
+        dgp_edge_count=lambda df: df.groupby(['source_degree', 'target_degree'])
+                                    .transform(sum)['num_permuted_edges']
+                                    .astype(numpy.uint32),
 
-    # The number of edges that occurred across all node pairs with the same
-    # `source_degree` and `target_degree`
-    prior_df['dgp_edge_count'] = (
-        prior_df
-        .groupby(['source_degree', 'target_degree'])
-        .transform(sum)['num_permuted_edges']
-        .astype(np.uint32)
     )
     del prior_df['num_permuted_edges']
 
     # The effective number of permutations for every node pair, incorporating
     # degree-grouping
-    prior_df['num_dgp'] = (n_permutations * prior_df.groupby(['source_id', 'target_id'])
-                                                    .transform(len)['edge'])
-
-    prior_df['xswap_prior'] = prior_df['dgp_edge_count'] / prior_df['num_dgp']
+    prior_df = prior_df.assign(
+        num_dgp=lambda df: (n_permutations * df.groupby(['source_degree', 'target_degree'])
+                                               .transform(len)['edge']),
+        xswap_prior=lambda df: df['dgp_edge_count'] / df['num_dgp']
+    )
     del prior_df['dgp_edge_count'], prior_df['num_dgp']
     return prior_df
 
