@@ -160,13 +160,6 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         Columns are the following:
         [source_id, target_id, edge, source_degree, target_degree, xswap_prior]
     """
-    # Compute the number of occurrences of each edge across permutations
-    edge_counter = compute_xswap_occurrence_matrix(
-        edge_list=edge_list, n_permutations=n_permutations, shape=shape,
-        allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
-        swap_multiplier=swap_multiplier, initial_seed=initial_seed,
-        max_malloc=max_malloc)
-
     # Compute the adjacency matrix of the original (unpermuted) network
     original_edges = xswap.network_formats.edges_to_matrix(
         edge_list, add_reverse_edges=(not allow_antiparallel), shape=shape,
@@ -177,19 +170,30 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         'source_id': numpy.repeat(numpy.arange(shape[0], dtype=dtypes['id']), shape[1]),
         'target_id': numpy.tile(numpy.arange(shape[1], dtype=dtypes['id']), shape[0]),
         'edge': original_edges.toarray().flatten(),
-        'num_permuted_edges': edge_counter.toarray().flatten(),
     })
-    del edge_counter, original_edges
+    del original_edges
 
-    prior_df = prior_df.assign(
-        source_degree=lambda df: df.groupby('source_id')
-                                   .transform(sum)['edge']
-                                   .astype(dtypes['degree']),
-        target_degree=lambda df: df.groupby('target_id')
-                                   .transform(sum)['edge']
-                                   .astype(dtypes['degree']),
-    )
-    del prior_df['source_id'], prior_df['target_id']
+    prior_df['source_degree'] = (prior_df
+                                 .groupby('source_id')
+                                 .transform(sum)['edge']
+                                 .astype(dtypes['degree']))
+    del prior_df['source_id']
+
+    prior_df['target_degree'] = (prior_df
+                                 .groupby('target_id')
+                                 .transform(sum)['edge']
+                                 .astype(dtypes['degree']))
+    del prior_df['target_id']
+
+    # Compute the number of occurrences of each edge across permutations
+    edge_counter = compute_xswap_occurrence_matrix(
+        edge_list=edge_list, n_permutations=n_permutations, shape=shape,
+        allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
+        swap_multiplier=swap_multiplier, initial_seed=initial_seed,
+        max_malloc=max_malloc)
+
+    prior_df['num_permuted_edges'] = edge_counter.astype(dtypes['degree']).toarray().flatten()
+    del edge_counter
 
     # The number of edges that occurred across all node pairs with the same
     # `source_degree` and `target_degree`
