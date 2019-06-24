@@ -1,4 +1,3 @@
-import collections
 from typing import List, Tuple
 
 import numpy
@@ -98,7 +97,10 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
                          shape: Tuple[int, int], allow_self_loops: bool = False,
                          allow_antiparallel: bool = False,
                          swap_multiplier: int = 10, initial_seed: int = 0,
-                         max_malloc: int = 4000000000):
+                         max_malloc: int = 4000000000,
+                         dtypes = {'id': numpy.uint16, 'degree': numpy.uint32,
+                                   'edge': bool, 'xswap_prior': float},
+                        ):
     """
     Compute the XSwap prior for every potential edge in the network. Uses
     degree-grouping to maximize the effective number of permutations for each
@@ -149,6 +151,8 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         holding edges that is significantly faster than alternatives. However,
         it is memory-inefficient and will not be used if more memory is required
         than `max_malloc`. Above the threshold, a Roaring bitset will be used.
+    dtypes : dict
+        Dictionary mapping returned column types to dtypes.
 
     Returns
     -------
@@ -166,12 +170,12 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     # Compute the adjacency matrix of the original (unpermuted) network
     original_edges = xswap.network_formats.edges_to_matrix(
         edge_list, add_reverse_edges=(not allow_antiparallel), shape=shape,
-        dtype=bool, sparse=True)
+        dtype=dtypes['edge'], sparse=True)
 
     # Setup DataFrame for recording prior data
     prior_df = pandas.DataFrame({
-        'source_id': numpy.repeat(numpy.arange(shape[0], dtype=numpy.uint16), shape[1]),
-        'target_id': numpy.tile(numpy.arange(shape[1], dtype=numpy.uint16), shape[0]),
+        'source_id': numpy.repeat(numpy.arange(shape[0], dtype=dtypes['id']), shape[1]),
+        'target_id': numpy.tile(numpy.arange(shape[1], dtype=dtypes['id']), shape[0]),
         'edge': original_edges.toarray().flatten(),
         'num_permuted_edges': edge_counter.toarray().flatten(),
     })
@@ -180,16 +184,16 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     prior_df = prior_df.assign(
         source_degree=lambda df: df.groupby('source_id')
                                    .transform(sum)['edge']
-                                   .astype(numpy.uint32),
+                                   .astype(dtypes['degree']),
         target_degree=lambda df: df.groupby('target_id')
                                    .transform(sum)['edge']
-                                   .astype(numpy.uint32),
+                                   .astype(dtypes['degree']),
 
         # The number of edges that occurred across all node pairs with the same
         # `source_degree` and `target_degree`
         dgp_edge_count=lambda df: df.groupby(['source_degree', 'target_degree'])
                                     .transform(sum)['num_permuted_edges']
-                                    .astype(numpy.uint32),
+                                    .astype(dtypes['degree']),
 
     )
     del prior_df['num_permuted_edges']
@@ -199,7 +203,8 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     prior_df = prior_df.assign(
         num_dgp=lambda df: (n_permutations * df.groupby(['source_degree', 'target_degree'])
                                                .transform(len)['edge']),
-        xswap_prior=lambda df: df['dgp_edge_count'] / df['num_dgp']
+        xswap_prior=lambda df: ((df['dgp_edge_count'] / df['num_dgp'])
+                                .astype(dtypes['xswap_prior'])),
     )
     del prior_df['dgp_edge_count'], prior_df['num_dgp']
     return prior_df

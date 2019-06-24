@@ -1,4 +1,7 @@
+import tempfile
+
 import pytest
+import requests
 
 import xswap
 
@@ -20,3 +23,24 @@ def test_xswap_changes_edges(edges, permutable):
         assert new_edges != edges
     else:
         assert new_edges == edges
+
+
+def test_roaring_warning():
+    """
+    Check that a warning is given when using the much slower but far more general
+    Roaring bitset rather than the faster fully uncompressed bitset.
+    """
+    edges_url = "https://github.com/greenelab/xswap/raw/{}/{}".format(
+        "8c31b4cbdbbf2cfa5018b1277bbd0e9f6263e573", "graphs/GiG_edges_reduced.txt")
+    response = requests.get(edges_url)
+    with tempfile.NamedTemporaryFile() as tf:
+        tf.write(response.content)
+        edges = xswap.preprocessing.load_processed_edges(tf.name)
+
+    with pytest.warns(None):
+        permuted_edges, stats = xswap.permute_edge_list(edges, allow_self_loops=True,
+            allow_antiparallel=False, multiplier=0.1, seed=0, max_malloc=4000000000)
+
+    with pytest.warns(RuntimeWarning, match="Using Roaring bitset because of the large number of edges."):
+        permuted_edges, stats = xswap.permute_edge_list(edges, allow_self_loops=True,
+            allow_antiparallel=False, multiplier=0.1, seed=0, max_malloc=10)

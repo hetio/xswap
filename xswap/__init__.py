@@ -1,7 +1,7 @@
 from xswap import network_formats
 from xswap import preprocessing
 from xswap import prior
-from xswap.xswap import permute_edge_list
+from xswap.permute import permute_edge_list
 
 __version__ = '0.0.2'
 
