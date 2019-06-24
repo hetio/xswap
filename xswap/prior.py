@@ -98,7 +98,7 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
                          allow_antiparallel: bool = False,
                          swap_multiplier: int = 10, initial_seed: int = 0,
                          max_malloc: int = 4000000000,
-                         dtypes = {'id': numpy.uint16, 'degree': numpy.uint32,
+                         dtypes = {'id': numpy.uint16, 'degree': numpy.uint16,
                                    'edge': bool, 'xswap_prior': float},
                         ):
     """
@@ -152,7 +152,11 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         it is memory-inefficient and will not be used if more memory is required
         than `max_malloc`. Above the threshold, a Roaring bitset will be used.
     dtypes : dict
-        Dictionary mapping returned column types to dtypes.
+        Dictionary mapping returned column types to dtypes. Keys should be
+        `'id'`, `'degree'`, `'edge'`, and `'xswap_prior'`. `dtype` need only
+        be changed from its defaults if the values of `id` or `degree` are
+        greater than the maxima in the default dtypes, or in cases where greater
+        precision is desired. (`numpy.uint16` has a maximum value of 65535.)
 
     Returns
     -------

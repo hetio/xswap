@@ -22,6 +22,9 @@ def matrix_to_edges(matrix: numpy.ndarray, include_reverse_edges: bool=True):
     Returns
     -------
     edge_list : List[Tuple[int, int]]
+        Edge list with node ids as the corresponding matrix indices. For example,
+        if `matrix` has `matrix[0, 2] == 1`, then `(0, 2)` will be among the
+        returned edges.
     """
     sparse = scipy.sparse.coo_matrix(matrix)
     edges = zip(sparse.row, sparse.col)
@@ -39,6 +42,9 @@ def edges_to_matrix(edge_list: List[Tuple[int, int]], add_reverse_edges: bool,
     Parameters
     ----------
     edge_list : List[Tuple[int, int]]
+        An edge list mapped such that node ids correspond to desired matrix
+        positions. For example, (0, 0) will mean that the resulting matrix has
+        a positive value of type `dtype` in that position.
     add_reverse_edges : bool
         Whether to include the reverse of edges in the matrix. For example,
         if `edge_list = [(1, 0)]` and `add_reverse_edge = True`, then the
