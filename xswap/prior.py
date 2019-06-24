@@ -188,25 +188,43 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         target_degree=lambda df: df.groupby('target_id')
                                    .transform(sum)['edge']
                                    .astype(dtypes['degree']),
+    )
+    del prior_df['source_id'], prior_df['target_id']
 
-        # The number of edges that occurred across all node pairs with the same
-        # `source_degree` and `target_degree`
-        dgp_edge_count=lambda df: df.groupby(['source_degree', 'target_degree'])
-                                    .transform(sum)['num_permuted_edges']
-                                    .astype(dtypes['degree']),
-
+    # The number of edges that occurred across all node pairs with the same
+    # `source_degree` and `target_degree`
+    dgp_edge_count = (
+        prior_df
+        .groupby(['source_degree', 'target_degree'])
+        .transform(sum)['num_permuted_edges']
+        .values
+        .astype(dtypes['degree'])
     )
     del prior_df['num_permuted_edges']
 
     # The effective number of permutations for every node pair, incorporating
     # degree-grouping
-    prior_df = prior_df.assign(
-        num_dgp=lambda df: (n_permutations * df.groupby(['source_degree', 'target_degree'])
-                                               .transform(len)['edge']),
-        xswap_prior=lambda df: ((df['dgp_edge_count'] / df['num_dgp'])
-                                .astype(dtypes['xswap_prior'])),
+    num_dgp = (
+        n_permutations * prior_df.groupby(['source_degree', 'target_degree'])
+                                 .transform(len)['edge']
+                                 .values
+                                 .astype(dtypes['degree'])
     )
-    del prior_df['dgp_edge_count'], prior_df['num_dgp']
+    xswap_prior = (dgp_edge_count / num_dgp).astype(dtypes['xswap_prior'])
+    del dgp_edge_count, num_dgp
+
+    prior_df['xswap_prior'] = xswap_prior
+    del xswap_prior
+
+    prior_df = (
+        prior_df
+        .assign(
+            source_id=numpy.repeat(numpy.arange(shape[0], dtype=dtypes['id']), shape[1]),
+            target_id=numpy.tile(numpy.arange(shape[1], dtype=dtypes['id']), shape[0]),
+        )
+        .filter(items=['source_id', 'target_id', 'edge', 'source_degree',
+                       'target_degree', 'xswap_prior'])
+    )
     return prior_df
 
 
