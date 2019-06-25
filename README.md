@@ -2,7 +2,7 @@
 
 ![](https://api.travis-ci.com/greenelab/xswap.svg?branch=master)
 
-![XSwap icon](docs/img/xswap.svg "XSwap" | width=100)
+<img src="docs/img/xswap.svg" width="250px">
 
 XSwap is an algorithm for degree-preserving network randomization (permutation) [1].
 Permuted networks can be used for a number of purposes in network analysis, including for generating counterfactual distributions of features when only the network's degree sequence is maintained or for computing a prior probability of an edge given only the network's degree sequence.
