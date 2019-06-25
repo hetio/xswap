@@ -1,6 +1,6 @@
 # XSwap: Fast degree-preserving network permutation
 
-![](https://api.travis-ci.com/greenelab/xswap.svg?branch=master)
+![](https://api.travis-ci.com/hetio/xswap.svg?branch=master)
 
 <img src="docs/img/xswap.svg" width="250px">
 
