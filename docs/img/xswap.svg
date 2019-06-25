@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    g > line {
+      stroke: #424242;
+      stroke-width: 3px;
+    }
+  </style>
+  <line
+    x1="0"
+    y1="100"
+    x2="45"
+    y2="55"
+    stroke="lightgrey"
+    stroke-width="1"
+  ></line>
+  <line
+    x1="100"
+    y1="0"
+    x2="55"
+    y2="45"
+    stroke="lightgrey"
+    stroke-width="1"
+  ></line>
+  <line
+    x1="46"
+    y1="46"
+    x2="51"
+    y2="51"
+    stroke="#424242"
+    stroke-width="3"
+  ></line>
+  <path
+    fill="#424242"
+    d="
+      M 54 54
+      L 47 53
+      L 53 47
+    "
+  ></path>
+  <g
+    transform="translate(-25,-25) translate(50,50) rotate(45) scale(0.5) translate(-50,-50)"
+  >
+    <line x1="25" y1="25" x2="75" y2="25"></line>
+    <line x1="25" y1="75" x2="75" y2="75"></line>
+    <circle cx="25" cy="25" r="10" fill="#02b3e4"></circle>
+    <circle cx="75" cy="25" r="10" fill="#e91e63"></circle>
+    <circle cx="75" cy="75" r="10" fill="#fa750f"></circle>
+    <circle cx="25" cy="75" r="10" fill="#c341d8"></circle>
+  </g>
+  <g
+    transform="translate(25,25) translate(50,50) rotate(45) scale(0.5) translate(-50,-50)"
+  >
+    <line x1="25" y1="25" x2="75" y2="75"></line>
+    <line x1="25" y1="75" x2="75" y2="25"></line>
+    <circle cx="25" cy="25" r="10" fill="#02b3e4"></circle>
+    <circle cx="75" cy="25" r="10" fill="#e91e63"></circle>
+    <circle cx="75" cy="75" r="10" fill="#fa750f"></circle>
+    <circle cx="25" cy="75" r="10" fill="#c341d8"></circle>
+  </g>
+</svg>

@@ -2,6 +2,8 @@
 
 ![](https://api.travis-ci.com/greenelab/xswap.svg?branch=master)
 
+![XSwap icon](docs/img/xswap.svg "XSwap" | width=100)
+
 XSwap is an algorithm for degree-preserving network randomization (permutation) [1].
 Permuted networks can be used for a number of purposes in network analysis, including for generating counterfactual distributions of features when only the network's degree sequence is maintained or for computing a prior probability of an edge given only the network's degree sequence.
 Overall, permuted networks allow one to quantify the effects of degree on analysis and prediction methods.
@@ -19,12 +21,12 @@ DOI: [10.1137/1.9781611972795.67](https://doi.org/10.1137/1.9781611972795.67)
 ```python
 >>> edges = [(0, 1), (1, 0)]
 >>> permuted_edges, permutation_statistics = xswap.permute_edge_list(
-        edges, allow_self_loops=False, allow_antiparallel=True,
+        edges, allow_self_loops=True, allow_antiparallel=True,
         multiplier=10)
 >>> permuted_edges
-[(1, 0), (0, 1)]
+[(0, 0), (1, 1)]
 >>> permutation_statistics
-{'swap_attempts': 20, 'same_edge': 10, 'self_loop': 5, 'duplicate': 1,
+{'swap_attempts': 20, 'same_edge': 10, 'self_loop': 0, 'duplicate': 1,
  'undir_duplicate': 0, 'excluded': 0}
 ```
 
