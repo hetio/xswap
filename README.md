@@ -10,7 +10,8 @@ Overall, permuted networks allow one to quantify the effects of degree on analys
 Understanding this effect is useful when a network's degree sequence is subject to biases.
 This implementation is a modified version of the algorithm due to Hanhijärvi et al. with two additional parameters (`allow_self_loops` and `allow_antiparallel`), which enable greater generalizability to bipartite, directed, and undirected networks.
 
-[1] Sami Hanhijärvi, Gemma C. Garriga, Kai Puolamäki
+1. **Randomization Techniques for Graphs**
+Sami Hanhijärvi, Gemma C. Garriga, Kai Puolamäki
 *Proceedings of the 2009 SIAM International Conference on Data Mining* (2009-04-30) <https://doi.org/f3mn58>
 DOI: [10.1137/1.9781611972795.67](https://doi.org/10.1137/1.9781611972795.67)
 
