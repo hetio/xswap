@@ -68,4 +68,4 @@ The XSwap library includes Roaring Bitmaps (https://github.com/RoaringBitmap/CRo
 
 Development of this project has largely taken place in the [Greene Lab](http://www.greenelab.com/) at the University of Pennsylvania. However, as an open source project under the `hetio` organization, this repository is grateful for its community of maintainers, contributors, and users.
 
-This work is funded in part by the Gordon and Betty Moore Foundation’s Data-Driven Discovery Initiative through Grants GBMF4552 to Casey Greene and GBMF4560 to Blair Sullivan.
+This work is funded in part by the Gordon and Betty Moore Foundation’s Data-Driven Discovery Initiative through Grants GBMF4552 to Casey Greene, GBMF4560 to Blair Sullivan, and the National Institutes of Health’s National Human Genome Research Institute R01 HG010067.
