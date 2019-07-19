@@ -196,7 +196,7 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         swap_multiplier=swap_multiplier, initial_seed=initial_seed,
         max_malloc=max_malloc)
 
-    prior_df['num_permuted_edges'] = edge_counter.astype(dtypes['degree']).toarray().flatten()
+    prior_df['num_permuted_edges'] = edge_counter.toarray().flatten()
     del edge_counter
 
     # The number of edges that occurred across all node pairs with the same
@@ -216,7 +216,6 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         n_permutations * prior_df.groupby(['source_degree', 'target_degree'])
                                  .transform(len)['edge']
                                  .values
-                                 .astype(dtypes['degree'])
     )
     xswap_prior = (dgp_edge_count / num_dgp).astype(dtypes['xswap_prior'])
     del dgp_edge_count, num_dgp
