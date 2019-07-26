@@ -258,5 +258,6 @@ def approximate_xswap_prior(source_degree, target_degree, num_edges):
         Output type matches the types of `source_degree` and `target_degree`.
     """
     return source_degree * target_degree / (
-        source_degree * target_degree + num_edges - source_degree - target_degree + 1
-    )
+        (source_degree * target_degree) ** 2
+        + (num_edges - source_degree - target_degree + 1 ** 2)
+    ) ** 0.5
