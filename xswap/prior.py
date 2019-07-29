@@ -259,5 +259,5 @@ def approximate_xswap_prior(source_degree, target_degree, num_edges):
     """
     return source_degree * target_degree / (
         (source_degree * target_degree) ** 2
-        + (num_edges - source_degree - target_degree + 1 ** 2)
+        + (num_edges - source_degree - target_degree + 1) ** 2
     ) ** 0.5
