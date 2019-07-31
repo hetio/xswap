@@ -31,7 +31,7 @@ setup_and_test: &setup_and_test
 build_and_upload: &build_and_upload
   stage: deploy
   sudo: required
-  if: [[ -v TRAVIS_TAG ]]
+  if: tag IS present
   services:
     - docker
   install:
