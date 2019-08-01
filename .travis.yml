@@ -31,7 +31,7 @@ setup_and_test: &setup_and_test
 build_and_upload: &build_and_upload
   stage: deploy
   sudo: required
-  if: tag IS present
+  if: tag IS blank
   services:
     - docker
   install:
