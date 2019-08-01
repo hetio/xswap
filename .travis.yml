@@ -1,31 +1,71 @@
-dist: xenial
-language: python
-python:
-  - 3.5
-  - 3.6
-  - 3.7
-install:
-  - pip install -r tests-require.txt
-addons:
-  apt:
-    packages:
-      - pkg-config
-      - python3-dev
+setup_and_test: &setup_and_test
+  stage: test
+  language: python
+  addons:
+    apt:
+      packages:
+        - pkg-config
+        - python3-dev
+  before_install:
+    - pip install -r tests-require.txt
+  install:
+    - pkg-config --cflags --libs python3
+    - python setup.py build
+    - pip install .
+  script:
+    - pytest tests/
+    - >
+        g++ tests/test_bitset.cpp xswap/src/xswap.h xswap/src/bitset.cpp
+        xswap/lib/roaring.c -o tests/test_bitset.o -std=c++11
+        `pkg-config --cflags --libs python3`
+    - ./tests/test_bitset.o
+    - >
+        g++ tests/test_roaring.cpp xswap/src/xswap.h xswap/src/bitset.cpp
+        xswap/lib/roaring.c -o tests/test_roaring.o -std=c++11
+        `pkg-config --cflags --libs python3`
+    - ./tests/test_roaring.o
+
+build_and_upload: &build_and_upload
+  stage: deploy
+  sudo: required
+  if: tag IS present
+  services:
+    - docker
+  install:
+    - docker pull $DOCKER_IMAGE
+  script:
+    - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE /io/ci/build-wheels.sh
+    - /opt/python/3.6/bin/pip install twine
+    - /opt/python/3.6/bin/python -m twine upload -u zietzm -p $PYPI_PASSWORD --repository-url https://upload.pypi.org/legacy/ --skip-existing wheelhouse/*
+
 compiler:
   - g++
-script:
-  - pkg-config --cflags --libs python3
-  - python setup.py build
-  - pip install .
-  - pytest tests/
-  - >
-      g++ tests/test_bitset.cpp xswap/src/xswap.h xswap/src/bitset.cpp
-      xswap/lib/roaring.c -o tests/test_bitset.o -std=c++11
-      `pkg-config --cflags --libs python3`
-  - ./tests/test_bitset.o
-  - >
-      g++ tests/test_roaring.cpp xswap/src/xswap.h xswap/src/bitset.cpp
-      xswap/lib/roaring.c -o tests/test_roaring.o -std=c++11
-      `pkg-config --cflags --libs python3`
-  - ./tests/test_roaring.o
-  - cat tests/permutation_stats.txt
+matrix:
+  include:
+    - <<: *setup_and_test
+      name: "Test 3.5 on Ubuntu"
+      dist: xenial
+      python: 3.5
+    - <<: *setup_and_test
+      name: "Test 3.6 on Ubuntu"
+      dist: xenial
+      python: 3.6
+    - <<: *setup_and_test
+      name: "Test 3.7 on Ubuntu"
+      dist: xenial
+      python: 3.7
+    - <<: *build_and_upload
+      name: "Build manylinux1_x86_64"
+      env:
+        - DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+        - PLAT=manylinux1_x86_64
+    - <<: *build_and_upload
+      name: "Build manylinux1_i686"
+      env:
+        - DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+        - PLAT=manylinux1_i686
+    - <<: *build_and_upload
+      name: "Build manylinux2010_x86_64"
+      env:
+        - DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
+        - PLAT=manylinux2010_x86_64
