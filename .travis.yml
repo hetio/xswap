@@ -28,7 +28,7 @@ setup_and_test: &setup_and_test
 build_and_upload: &build_and_upload
   stage: deploy
   sudo: required
-  if: tag IS blank
+  if: tag IS present
   services:
     - docker
   install:
@@ -36,7 +36,7 @@ build_and_upload: &build_and_upload
   script:
     - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE /io/ci/build-wheels.sh
     - /opt/python/3.6/bin/pip install twine
-    - /opt/python/3.6/bin/python -m twine upload -u zietzm -p $PYPI_PASSWORD --repository-url https://test.pypi.org/legacy/ --skip-existing wheelhouse/*
+    - /opt/python/3.6/bin/python -m twine upload -u zietzm -p $PYPI_PASSWORD --repository-url https://upload.pypi.org/legacy/ --skip-existing wheelhouse/*
 
 compiler:
   - g++
