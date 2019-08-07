@@ -1,6 +1,8 @@
 # XSwap: Fast degree-preserving network permutation
 
-![](https://api.travis-ci.com/hetio/xswap.svg?branch=master)
+[![Linux Build Status](https://img.shields.io/travis/com/hetio/xswap/master.svg?logo=travis)](https://travis-ci.com/hetio/xswap)
+[![PyPI](https://img.shields.io/pypi/v/xswap.svg?logo=pypi&logoColor=white)](https://pypi.org/project/xswap/)
+[![GitHub issues](https://img.shields.io/github/issues/hetio/xswap.svg?logo=github)](https://github.com/hetio/xswap/issues)
 
 <img src="https://raw.githubusercontent.com/hetio/xswap/master/docs/img/xswap.svg?sanitize=true" width="250px">
 
