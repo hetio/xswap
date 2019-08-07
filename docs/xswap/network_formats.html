@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.6.3" />
-<title>network_formats API documentation</title>
+<title>xswap.network_formats API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>network_formats</code></h1>
+<h1 class="title">Module <code>xswap.network_formats</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -109,11 +109,11 @@ def edges_to_matrix(edge_list: List[Tuple[int, int]], add_reverse_edges: bool,
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="network_formats.edges_to_matrix"><code class="name flex">
+<dt id="xswap.network_formats.edges_to_matrix"><code class="name flex">
 <span>def <span class="ident">edges_to_matrix</span></span>(<span>edge_list, add_reverse_edges, shape, dtype=<class 'bool'>, sparse=True)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Convert edge list to (bi)adjacency matrix. Inverse of <a title="network_formats.matrix_to_edges" href="#network_formats.matrix_to_edges"><code>matrix_to_edges()</code></a>.</p>
+<section class="desc"><p>Convert edge list to (bi)adjacency matrix. Inverse of <a title="xswap.network_formats.matrix_to_edges" href="#xswap.network_formats.matrix_to_edges"><code>matrix_to_edges()</code></a>.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>edge_list</code></strong> :&ensp;<code>List</code>[<code>Tuple</code>[<code>int</code>, <code>int</code>]]</dt>
@@ -186,11 +186,11 @@ numpy.ndarray</dd>
     return matrix</code></pre>
 </details>
 </dd>
-<dt id="network_formats.matrix_to_edges"><code class="name flex">
+<dt id="xswap.network_formats.matrix_to_edges"><code class="name flex">
 <span>def <span class="ident">matrix_to_edges</span></span>(<span>matrix, include_reverse_edges=True)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Convert (bi)adjacency matrix to an edge list. Inverse of <a title="network_formats.edges_to_matrix" href="#network_formats.edges_to_matrix"><code>edges_to_matrix()</code></a>.</p>
+<section class="desc"><p>Convert (bi)adjacency matrix to an edge list. Inverse of <a title="xswap.network_formats.edges_to_matrix" href="#xswap.network_formats.edges_to_matrix"><code>edges_to_matrix()</code></a>.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>matrix</code></strong> :&ensp;<code>numpy.ndarray</code></dt>
@@ -252,10 +252,15 @@ returned edges.</dd>
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="xswap" href="index.html">xswap</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="network_formats.edges_to_matrix" href="#network_formats.edges_to_matrix">edges_to_matrix</a></code></li>
-<li><code><a title="network_formats.matrix_to_edges" href="#network_formats.matrix_to_edges">matrix_to_edges</a></code></li>
+<li><code><a title="xswap.network_formats.edges_to_matrix" href="#xswap.network_formats.edges_to_matrix">edges_to_matrix</a></code></li>
+<li><code><a title="xswap.network_formats.matrix_to_edges" href="#xswap.network_formats.matrix_to_edges">matrix_to_edges</a></code></li>
 </ul>
 </li>
 </ul>

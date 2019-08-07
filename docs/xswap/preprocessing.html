@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.6.3" />
-<title>preprocessing API documentation</title>
+<title>xswap.preprocessing API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>preprocessing</code></h1>
+<h1 class="title">Module <code>xswap.preprocessing</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -141,7 +141,7 @@ def map_str_edges(edges, bipartite):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="preprocessing.load_processed_edges"><code class="name flex">
+<dt id="xswap.preprocessing.load_processed_edges"><code class="name flex">
 <span>def <span class="ident">load_processed_edges</span></span>(<span>filename)</span>
 </code></dt>
 <dd>
@@ -161,7 +161,7 @@ to be integers ranging from zero to the number of unique nodes.</p></section>
     return edges</code></pre>
 </details>
 </dd>
-<dt id="preprocessing.load_str_edges"><code class="name flex">
+<dt id="xswap.preprocessing.load_str_edges"><code class="name flex">
 <span>def <span class="ident">load_str_edges</span></span>(<span>filename, node_delim=',', edge_delim='\n')</span>
 </code></dt>
 <dd>
@@ -180,7 +180,7 @@ as Tuple[str, str]. Used to load edges for preprocessing.</p></section>
     return str_edges</code></pre>
 </details>
 </dd>
-<dt id="preprocessing.map_str_edges"><code class="name flex">
+<dt id="xswap.preprocessing.map_str_edges"><code class="name flex">
 <span>def <span class="ident">map_str_edges</span></span>(<span>edges, bipartite)</span>
 </code></dt>
 <dd>
@@ -243,7 +243,7 @@ are consistently mapped between source and target, put <code>bipartite=False</co
     return (mapped_edges, source_map, target_map)</code></pre>
 </details>
 </dd>
-<dt id="preprocessing.write_edges"><code class="name flex">
+<dt id="xswap.preprocessing.write_edges"><code class="name flex">
 <span>def <span class="ident">write_edges</span></span>(<span>filename, edges, node_delim=',', edge_delim='\n')</span>
 </code></dt>
 <dd>
@@ -256,7 +256,7 @@ are consistently mapped between source and target, put <code>bipartite=False</co
         writer.writerows(edges)</code></pre>
 </details>
 </dd>
-<dt id="preprocessing.write_mapping"><code class="name flex">
+<dt id="xswap.preprocessing.write_mapping"><code class="name flex">
 <span>def <span class="ident">write_mapping</span></span>(<span>filename, mapping, delimiter=',')</span>
 </code></dt>
 <dd>
@@ -282,13 +282,18 @@ are consistently mapped between source and target, put <code>bipartite=False</co
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="xswap" href="index.html">xswap</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="preprocessing.load_processed_edges" href="#preprocessing.load_processed_edges">load_processed_edges</a></code></li>
-<li><code><a title="preprocessing.load_str_edges" href="#preprocessing.load_str_edges">load_str_edges</a></code></li>
-<li><code><a title="preprocessing.map_str_edges" href="#preprocessing.map_str_edges">map_str_edges</a></code></li>
-<li><code><a title="preprocessing.write_edges" href="#preprocessing.write_edges">write_edges</a></code></li>
-<li><code><a title="preprocessing.write_mapping" href="#preprocessing.write_mapping">write_mapping</a></code></li>
+<li><code><a title="xswap.preprocessing.load_processed_edges" href="#xswap.preprocessing.load_processed_edges">load_processed_edges</a></code></li>
+<li><code><a title="xswap.preprocessing.load_str_edges" href="#xswap.preprocessing.load_str_edges">load_str_edges</a></code></li>
+<li><code><a title="xswap.preprocessing.map_str_edges" href="#xswap.preprocessing.map_str_edges">map_str_edges</a></code></li>
+<li><code><a title="xswap.preprocessing.write_edges" href="#xswap.preprocessing.write_edges">write_edges</a></code></li>
+<li><code><a title="xswap.preprocessing.write_mapping" href="#xswap.preprocessing.write_mapping">write_mapping</a></code></li>
 </ul>
 </li>
 </ul>

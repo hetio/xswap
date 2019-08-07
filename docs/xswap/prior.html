@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.6.3" />
-<title>prior API documentation</title>
+<title>xswap.prior API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>prior</code></h1>
+<h1 class="title">Module <code>xswap.prior</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -294,7 +294,7 @@ def approximate_xswap_prior(source_degree, target_degree, num_edges):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="prior.approximate_xswap_prior"><code class="name flex">
+<dt id="xswap.prior.approximate_xswap_prior"><code class="name flex">
 <span>def <span class="ident">approximate_xswap_prior</span></span>(<span>source_degree, target_degree, num_edges)</span>
 </code></dt>
 <dd>
@@ -347,7 +347,7 @@ The type of object passed should match <code>source_degree</code>.</dd>
     ) ** 0.5</code></pre>
 </details>
 </dd>
-<dt id="prior.compute_xswap_occurrence_matrix"><code class="name flex">
+<dt id="xswap.prior.compute_xswap_occurrence_matrix"><code class="name flex">
 <span>def <span class="ident">compute_xswap_occurrence_matrix</span></span>(<span>edge_list, n_permutations, shape, allow_self_loops=False, allow_antiparallel=False, swap_multiplier=10, initial_seed=0, max_malloc=4000000000)</span>
 </code></dt>
 <dd>
@@ -364,7 +364,7 @@ computed. Tuples contain integer values representing nodes. No value
 should be greater than C++'s <code>INT_MAX</code>, in this case 2_147_483_647.
 An adjacency matrix will be created assuming that a node's value is its
 index in the matrix. If not, map edges (identifiers can be string or
-otherwise) using <code>xswap.preprocessing.map_str_edges</code>.</dd>
+otherwise) using <a title="xswap.preprocessing.map_str_edges" href="preprocessing.html#xswap.preprocessing.map_str_edges"><code>map_str_edges()</code></a>.</dd>
 <dt><strong><code>n_permutations</code></strong> :&ensp;<code>int</code></dt>
 <dd>The number of permuted networks used to compute the empirical XSwap prior</dd>
 <dt><strong><code>shape</code></strong> :&ensp;<code>Tuple</code>[<code>int</code>, <code>int</code>]</dt>
@@ -491,7 +491,7 @@ which a given edge appeared</dd>
     return edge_counter</code></pre>
 </details>
 </dd>
-<dt id="prior.compute_xswap_priors"><code class="name flex">
+<dt id="xswap.prior.compute_xswap_priors"><code class="name flex">
 <span>def <span class="ident">compute_xswap_priors</span></span>(<span>edge_list, n_permutations, shape, allow_self_loops=False, allow_antiparallel=False, swap_multiplier=10, initial_seed=0, max_malloc=4000000000, dtypes={'id': <class 'numpy.uint16'>, 'degree': <class 'numpy.uint16'>, 'edge': <class 'bool'>, 'xswap_prior': <class 'float'>})</span>
 </code></dt>
 <dd>
@@ -509,7 +509,7 @@ computed. Tuples contain integer values representing nodes. No value
 should be greater than C++'s <code>INT_MAX</code>, in this case 2_147_483_647.
 An adjacency matrix will be created assuming that a node's value is its
 index in the matrix. If not, map edges (identifiers can be string or
-otherwise) using <code>xswap.preprocessing.map_str_edges</code>.</dd>
+otherwise) using <a title="xswap.preprocessing.map_str_edges" href="preprocessing.html#xswap.preprocessing.map_str_edges"><code>map_str_edges()</code></a>.</dd>
 <dt><strong><code>n_permutations</code></strong> :&ensp;<code>int</code></dt>
 <dd>The number of permuted networks used to compute the empirical XSwap prior</dd>
 <dt><strong><code>shape</code></strong> :&ensp;<code>Tuple</code>[<code>int</code>, <code>int</code>]</dt>
@@ -710,11 +710,16 @@ precision is desired. (<code>numpy.uint16</code> has a maximum value of 65535.)<
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="xswap" href="index.html">xswap</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="prior.approximate_xswap_prior" href="#prior.approximate_xswap_prior">approximate_xswap_prior</a></code></li>
-<li><code><a title="prior.compute_xswap_occurrence_matrix" href="#prior.compute_xswap_occurrence_matrix">compute_xswap_occurrence_matrix</a></code></li>
-<li><code><a title="prior.compute_xswap_priors" href="#prior.compute_xswap_priors">compute_xswap_priors</a></code></li>
+<li><code><a title="xswap.prior.approximate_xswap_prior" href="#xswap.prior.approximate_xswap_prior">approximate_xswap_prior</a></code></li>
+<li><code><a title="xswap.prior.compute_xswap_occurrence_matrix" href="#xswap.prior.compute_xswap_occurrence_matrix">compute_xswap_occurrence_matrix</a></code></li>
+<li><code><a title="xswap.prior.compute_xswap_priors" href="#xswap.prior.compute_xswap_priors">compute_xswap_priors</a></code></li>
 </ul>
 </li>
 </ul>

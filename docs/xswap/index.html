@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>xswap API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>xswap</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">from xswap import network_formats
+from xswap import preprocessing
+from xswap import prior
+from xswap.permute import permute_edge_list
+
+__version__ = &#39;0.0.2&#39;
+
+__all__ = [
+    &#39;network_formats.edges_to_matrix&#39;,
+    &#39;network_formats.matrix_to_edges&#39;,
+    &#39;permute_edge_list&#39;,
+    &#39;preprocessing.load_str_edges&#39;,
+    &#39;preprocessing.load_processed_edges&#39;,
+    &#39;preprocessing.map_str_edges&#39;,
+    &#39;prior.compute_xswap_occurrence_matrix&#39;,
+    &#39;prior.compute_xswap_priors&#39;,
+    &#39;prior.approximate_xswap_prior&#39;,
+]</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="xswap.network_formats" href="network_formats.html">xswap.network_formats</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="xswap.permute" href="permute.html">xswap.permute</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="xswap.preprocessing" href="preprocessing.html">xswap.preprocessing</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="xswap.prior" href="prior.html">xswap.prior</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="xswap.permute_edge_list"><code class="name flex">
+<span>def <span class="ident">permute_edge_list</span></span>(<span>edge_list, allow_self_loops=False, allow_antiparallel=False, multiplier=10, excluded_edges=set(), seed=0, max_malloc=4000000000)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Permute the edges of a graph using the XSwap method given by Hanhijärvi,
+et al. (doi.org/f3mn58). XSwap is a degree-preserving network randomization
+technique that selects edges, checks the validity of the swap, and exchanges
+the target nodes between the edges. For information on what values to select
+for directed, please see README.md.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>edge_list</code></strong> :&ensp;<code>List</code>[<code>Tuple</code>[<code>int</code>, <code>int</code>]]</dt>
+<dd>Edge list representing the graph to be randomized. Tuples can contain
+integer values representing nodes. No value should be greater than C++'s
+<code>INT_MAX</code>, in this case 2_147_483_647.</dd>
+<dt><strong><code>allow_self_loops</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to allow edges like (0, 0). In the case of bipartite graphs,
+such an edge represents a connection between two distinct nodes, while
+in other graphs it may represent an edge from a node to itself, in which
+case an edge may or may not be meaningful depending on context.</dd>
+<dt><strong><code>allow_antiparallel</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to allow simultaneous edges like (0, 1) and (1, 0). In the case
+of bipartite graphs, these edges represent two connections between four
+distinct nodes, while for other graphs, these may be connections between
+the same two nodes.</dd>
+<dt><strong><code>multiplier</code></strong> :&ensp;<code>float</code></dt>
+<dd>The number of edge swap attempts is determined by the product of the
+number of existing edges and multiplier. For example, if five edges are
+passed and multiplier is set to 10, 50 swaps will be attempted. Non-integer
+products will be rounded down to the nearest integer.</dd>
+<dt><strong><code>excluded_edges</code></strong> :&ensp;<code>Set</code>[<code>Tuple</code>[<code>int</code>, <code>int</code>]]</dt>
+<dd>Specific edges which should never be created by the network randomization</dd>
+<dt><strong><code>seed</code></strong> :&ensp;<code>int</code></dt>
+<dd>Random seed that will be passed to the C++ Mersenne Twister 19937 random
+number generator.</dd>
+<dt><strong><code>max_malloc</code></strong> :&ensp;<code>int</code> (<code>unsigned` `long` `long` `int</code> <code>in</code> <code>C</code>)</dt>
+<dd>The maximum amount of memory to be allocated using <code>malloc</code> when making
+a bitset to hold edges. An uncompressed bitset is implemented for
+holding edges that is significantly faster than alternatives. However,
+it is memory-inefficient and will not be used if more memory is required
+than <code>max_malloc</code>. Above the threshold, a Roaring bitset will be used.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>new_edges</code></strong> :&ensp;<code>List</code>[<code>Tuple</code>[<code>int</code>, <code>int</code>]]</dt>
+<dd>Edge list of a permutation of the network given as <code>edge_list</code></dd>
+<dt><strong><code>stats</code></strong> :&ensp;<code>Dict</code>[<code>str</code>, <code>int</code>]</dt>
+<dd>Information about the permutation performed. Gives the following information:
+<code>swap_attempts</code> - number of attempted swaps
+<code>same_edge</code> - number of swaps rejected because one edge was chosen twice
+<code>self_loop</code> - number of swaps rejected because new edge is a self-loop
+'duplicate<code>- number of swaps rejected because new edge already exists</code>undir_duplicate<code>- number of swaps rejected because the network is
+undirected and the reverse of the new edge already exists</code>excluded` - number of swaps rejected because new edge was among excluded</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool = False,
+                      allow_antiparallel: bool = False, multiplier: float = 10,
+                      excluded_edges: Set[Tuple[int, int]] = set(), seed: int = 0,
+                      max_malloc: int = 4000000000):
+    &#34;&#34;&#34;
+    Permute the edges of a graph using the XSwap method given by Hanhijärvi,
+    et al. (doi.org/f3mn58). XSwap is a degree-preserving network randomization
+    technique that selects edges, checks the validity of the swap, and exchanges
+    the target nodes between the edges. For information on what values to select
+    for directed, please see README.md.
+
+    Parameters
+    ----------
+    edge_list : List[Tuple[int, int]]
+        Edge list representing the graph to be randomized. Tuples can contain
+        integer values representing nodes. No value should be greater than C++&#39;s
+        `INT_MAX`, in this case 2_147_483_647.
+    allow_self_loops : bool
+        Whether to allow edges like (0, 0). In the case of bipartite graphs,
+        such an edge represents a connection between two distinct nodes, while
+        in other graphs it may represent an edge from a node to itself, in which
+        case an edge may or may not be meaningful depending on context.
+    allow_antiparallel : bool
+        Whether to allow simultaneous edges like (0, 1) and (1, 0). In the case
+        of bipartite graphs, these edges represent two connections between four
+        distinct nodes, while for other graphs, these may be connections between
+        the same two nodes.
+    multiplier : float
+        The number of edge swap attempts is determined by the product of the
+        number of existing edges and multiplier. For example, if five edges are
+        passed and multiplier is set to 10, 50 swaps will be attempted. Non-integer
+        products will be rounded down to the nearest integer.
+    excluded_edges : Set[Tuple[int, int]]
+        Specific edges which should never be created by the network randomization
+    seed : int
+        Random seed that will be passed to the C++ Mersenne Twister 19937 random
+        number generator.
+    max_malloc : int (`unsigned long long int` in C)
+        The maximum amount of memory to be allocated using `malloc` when making
+        a bitset to hold edges. An uncompressed bitset is implemented for
+        holding edges that is significantly faster than alternatives. However,
+        it is memory-inefficient and will not be used if more memory is required
+        than `max_malloc`. Above the threshold, a Roaring bitset will be used.
+
+    Returns
+    -------
+    new_edges : List[Tuple[int, int]]
+        Edge list of a permutation of the network given as `edge_list`
+    stats : Dict[str, int]
+        Information about the permutation performed. Gives the following information:
+        `swap_attempts` - number of attempted swaps
+        `same_edge` - number of swaps rejected because one edge was chosen twice
+        `self_loop` - number of swaps rejected because new edge is a self-loop
+        &#39;duplicate` - number of swaps rejected because new edge already exists
+        `undir_duplicate` - number of swaps rejected because the network is
+            undirected and the reverse of the new edge already exists
+        `excluded` - number of swaps rejected because new edge was among excluded
+    &#34;&#34;&#34;
+    if len(edge_list) != len(set(edge_list)):
+        raise ValueError(&#34;Edge list contained duplicate edges.&#34;)
+
+    # Number of attempted XSwap swaps
+    num_swaps = int(multiplier * len(edge_list))
+
+    # Compute the maximum node ID (for creating the bitset)
+    max_id = max(map(max, edge_list))
+
+    new_edges, stats = xswap._xswap_backend._xswap(
+        edge_list, list(excluded_edges), max_id, allow_self_loops,
+        allow_antiparallel, num_swaps, seed, max_malloc)
+
+    return new_edges, stats</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="xswap.network_formats" href="network_formats.html">xswap.network_formats</a></code></li>
+<li><code><a title="xswap.permute" href="permute.html">xswap.permute</a></code></li>
+<li><code><a title="xswap.preprocessing" href="preprocessing.html">xswap.preprocessing</a></code></li>
+<li><code><a title="xswap.prior" href="prior.html">xswap.prior</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="xswap.permute_edge_list" href="#xswap.permute_edge_list">permute_edge_list</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
