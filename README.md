@@ -4,6 +4,8 @@
 [![PyPI](https://img.shields.io/pypi/v/xswap.svg?logo=pypi&logoColor=white)](https://pypi.org/project/xswap/)
 [![GitHub issues](https://img.shields.io/github/issues/hetio/xswap.svg?logo=github)](https://github.com/hetio/xswap/issues)
 
+**Full documentation:** https://hetio.github.io/xswap/
+
 <img src="https://raw.githubusercontent.com/hetio/xswap/master/docs/img/xswap.svg?sanitize=true" width="250px">
 
 XSwap is an algorithm for degree-preserving network randomization (permutation) [1].
