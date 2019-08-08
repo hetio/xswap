@@ -1,5 +1,8 @@
 from typing import List, Tuple, TypeVar
 
+import numpy
+import scipy.sparse
+
 
 def matrix_to_edges(matrix: numpy.ndarray, include_reverse_edges: bool=True):
     """
@@ -23,7 +26,6 @@ def matrix_to_edges(matrix: numpy.ndarray, include_reverse_edges: bool=True):
         if `matrix` has `matrix[0, 2] == 1`, then `(0, 2)` will be among the
         returned edges.
     """
-    import scipy.sparse
     sparse = scipy.sparse.coo_matrix(matrix)
     edges = zip(sparse.row, sparse.col)
 
@@ -62,8 +64,6 @@ def edges_to_matrix(edge_list: List[Tuple[int, int]], add_reverse_edges: bool,
     -------
     matrix : scipy.sparse.csc_matrix or numpy.ndarray
     """
-    import numpy
-    import scipy.sparse
     matrix = scipy.sparse.csc_matrix(
         (numpy.ones(len(edge_list)), zip(*edge_list)), dtype=dtype, shape=shape,
     )
