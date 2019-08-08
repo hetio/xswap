@@ -15,7 +15,7 @@ eval "$(ssh-agent -s)"
 # Ensure command traces are disabled while dealing with the private key
 [[ "$SHELLOPTS" =~ xtrace ]] && XTRACE_ON=1
 [[ "${XTRACE_ON:-}" ]] && set +o xtrace && echo "xtrace disabled"
-echo -e "$GITHUB_DEPLOY_PRIVATE_KEY" | ssh-add -
+base64 --decode <<< "$GITHUB_DEPLOY_PRIVATE_KEY" | ssh-add -
 [[ "${XTRACE_ON:-}" ]] && set -o xtrace && echo "xtrace reenabled"
 
 # Configure git
