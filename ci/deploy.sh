@@ -42,4 +42,4 @@ based on https://github.com/$TRAVIS_REPO_SLUG/commit/$TRAVIS_COMMIT
 ghp-import \
   --push --no-jekyll \
   --message="$commit_message" \
-  docs/output
+  docs/output/xswap

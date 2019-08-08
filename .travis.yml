@@ -76,9 +76,10 @@ matrix:
       before_install:
         - export PYTHONWARNINGS='error::UserWarning'
       install:
+        - pip install -r tests-require.txt
         - pip install pdoc3==0.6.3 ghp-import==0.5.5
       script:
-        - pdoc --html --output-dir docs/output/ xswap/*.py --force
+        - pdoc --html --output-dir docs/output/ xswap/ --force
       deploy:
         provider: script
         script: bash ci/deploy.sh

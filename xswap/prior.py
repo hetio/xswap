@@ -4,7 +4,6 @@ import numpy
 import pandas
 import scipy.sparse
 
-import xswap._xswap_backend
 import xswap.network_formats
 
 
@@ -71,6 +70,7 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
         Adjacency matrix with entries equal to the number of permutations in
         which a given edge appeared
     """
+    import xswap._xswap_backend
     if len(edge_list) != len(set(edge_list)):
         raise ValueError("Edge list contained duplicate edges. "
                          "XSwap does not support multigraphs.")
