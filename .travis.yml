@@ -73,8 +73,6 @@ matrix:
       dist: xenial
       language: python
       python: 3.7
-      before_install:
-        - export PYTHONWARNINGS='error::UserWarning'
       install:
         - pip install -r tests-require.txt
         - pip install pdoc3==0.6.3 ghp-import==0.5.5
