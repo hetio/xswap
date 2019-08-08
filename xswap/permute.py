@@ -1,7 +1,5 @@
 from typing import List, Set, Tuple
 
-import xswap._xswap_backend
-
 
 def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool = False,
                       allow_antiparallel: bool = False, multiplier: float = 10,
@@ -61,6 +59,7 @@ def permute_edge_list(edge_list: List[Tuple[int, int]], allow_self_loops: bool =
             undirected and the reverse of the new edge already exists
         `excluded` - number of swaps rejected because new edge was among excluded
     """
+    import xswap._xswap_backend
     if len(edge_list) != len(set(edge_list)):
         raise ValueError("Edge list contained duplicate edges.")
 

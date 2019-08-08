@@ -1,9 +1,10 @@
+docs/output/
+tests/permutation_stats.txt
+tests/*.o
 build/
 dist/
 .vscode/
 __pycache__/
 .pytest_cache/
-tests/permutation_stats.txt
-tests/*.o
 **.so
 xswap.egg-info/
