@@ -12,6 +12,7 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
                                     shape: Tuple[int, int],
                                     allow_self_loops: bool = False,
                                     allow_antiparallel: bool = False,
+                                    sparse: bool = True,
                                     swap_multiplier: float = 10,
                                     initial_seed: int = 0,
                                     max_malloc: int = 4000000000):
@@ -46,6 +47,10 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
         of bipartite graphs, these edges represent two connections between four
         distinct nodes, while for other graphs, these may be connections between
         the same two nodes.
+    sparse : bool
+        Whether to use a sparse matrix when adding up edge occurrences across
+        permutations. If large changes in sparsity are expected, a dense
+        array may be preferable.
     swap_multiplier : float
         The number of edge swap attempts is determined by the product of the
         number of existing edges and multiplier. For example, if five edges are
@@ -79,7 +84,10 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
 
     max_id = max(map(max, edge_list))
 
-    edge_counter = scipy.sparse.csc_matrix(shape, dtype=int)
+    if sparse:
+        edge_counter = scipy.sparse.csc_matrix(shape, dtype=int)
+    else:
+        edge_counter = numpy.zeros(shape, dtype=int)
 
     for i in range(n_permutations):
         permuted_edges, stats = xswap._xswap_backend._xswap(
@@ -87,7 +95,7 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
             num_swaps, initial_seed + i, max_malloc)
         permuted_matrix = xswap.network_formats.edges_to_matrix(
             permuted_edges, add_reverse_edges=(not allow_antiparallel),
-            shape=shape, dtype=int, sparse=True)
+            shape=shape, dtype=int, sparse=sparse)
         edge_counter += permuted_matrix
 
     return edge_counter
@@ -95,7 +103,7 @@ def compute_xswap_occurrence_matrix(edge_list: List[Tuple[int, int]],
 
 def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
                          shape: Tuple[int, int], allow_self_loops: bool = False,
-                         allow_antiparallel: bool = False,
+                         allow_antiparallel: bool = False, sparse: bool = True,
                          swap_multiplier: int = 10, initial_seed: int = 0,
                          max_malloc: int = 4000000000,
                          dtypes = {'id': numpy.uint16, 'degree': numpy.uint16,
@@ -134,6 +142,10 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
         of bipartite graphs, these edges represent two connections between four
         distinct nodes, while for other graphs, these may be connections between
         the same two nodes.
+    sparse : bool
+        Whether to use a sparse matrix when adding up edge occurrences across
+        permutations. If large changes in sparsity are expected, a dense
+        array may be preferable.
     swap_multiplier : float
         The number of edge swap attempts is determined by the product of the
         number of existing edges and multiplier. For example, if five edges are
@@ -193,7 +205,7 @@ def compute_xswap_priors(edge_list: List[Tuple[int, int]], n_permutations: int,
     edge_counter = compute_xswap_occurrence_matrix(
         edge_list=edge_list, n_permutations=n_permutations, shape=shape,
         allow_self_loops=allow_self_loops, allow_antiparallel=allow_antiparallel,
-        swap_multiplier=swap_multiplier, initial_seed=initial_seed,
+        sparse=sparse, swap_multiplier=swap_multiplier, initial_seed=initial_seed,
         max_malloc=max_malloc)
 
     prior_df['num_permuted_edges'] = edge_counter.toarray().flatten()
