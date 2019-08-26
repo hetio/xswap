@@ -4,7 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/xswap.svg?logo=pypi&logoColor=white)](https://pypi.org/project/xswap/)
 [![GitHub issues](https://img.shields.io/github/issues/hetio/xswap.svg?logo=github)](https://github.com/hetio/xswap/issues)
 
-**Full documentation:** https://hetio.github.io/xswap/
+**Full documentation:** <https://hetio.github.io/xswap/>
 
 <img src="https://raw.githubusercontent.com/hetio/xswap/master/docs/img/xswap.svg?sanitize=true" width="250px">
 
@@ -14,9 +14,9 @@ Overall, permuted networks allow one to quantify the effects of degree on analys
 Understanding this effect is useful when a network's degree sequence is subject to biases.
 This implementation is a modified version of the algorithm due to Hanhijärvi et al. with two additional parameters (`allow_self_loops` and `allow_antiparallel`), which enable greater generalizability to bipartite, directed, and undirected networks.
 
-1. **Randomization Techniques for Graphs**
-Sami Hanhijärvi, Gemma C. Garriga, Kai Puolamäki
-*Proceedings of the 2009 SIAM International Conference on Data Mining* (2009-04-30) <https://doi.org/f3mn58>
+1. **Randomization Techniques for Graphs**  
+Sami Hanhijärvi, Gemma C. Garriga, Kai Puolamäki  
+*Proceedings of the 2009 SIAM International Conference on Data Mining* (2009-04-30) <https://doi.org/f3mn58>  
 DOI: [10.1137/1.9781611972795.67](https://doi.org/10.1137/1.9781611972795.67)
 
 ## Usage examples
@@ -66,10 +66,10 @@ Similarly, self-loops may or may not be allowed for directed or undirected netwo
 
 ## Libraries
 
-The XSwap library includes Roaring Bitmaps (https://github.com/RoaringBitmap/CRoaring), available under the Apache 2.0 license (https://github.com/RoaringBitmap/CRoaring/blob/LICENSE).
+The XSwap library includes [Roaring Bitmaps](https://github.com/RoaringBitmap/CRoaring), available under the [Apache 2.0 license](https://github.com/RoaringBitmap/CRoaring/blob/LICENSE).
 
 ## Acknowledgments
 
-Development of this project has largely taken place in the [Greene Lab](http://www.greenelab.com/) at the University of Pennsylvania. However, as an open source project under the `hetio` organization, this repository is grateful for its community of maintainers, contributors, and users.
+Development of this project has largely taken place in the [Greene Lab](http://www.greenelab.com/) at the University of Pennsylvania. As an open source project under the `hetio` organization, this repository is grateful for its community of maintainers, contributors, and users.
 
-This work is funded in part by the Gordon and Betty Moore Foundation’s Data-Driven Discovery Initiative through Grants GBMF4552 to Casey Greene, GBMF4560 to Blair Sullivan, and the National Institutes of Health’s National Human Genome Research Institute R01 HG010067.
+This work is funded in part by the Gordon and Betty Moore Foundation’s Data-Driven Discovery Initiative through Grants [GBMF4552](https://www.moore.org/grant-detail?grantId=GBMF4552) to Casey Greene, [GBMF4560](https://www.moore.org/grant-detail?grantId=GBMF4560) to Blair Sullivan, and the National Institutes of Health’s National Human Genome Research Institute [R01 HG010067](http://grantome.com/grant/NIH/R01-HG010067-02).
