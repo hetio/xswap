@@ -29,6 +29,12 @@ setuptools.setup(
     name='xswap',
     version=version,
     url='https://github.com/greenelab/xswap',
+    project_urls={
+        'Documentation': 'https://hetio.github.io/xswap/',
+        'Source': 'https://github.com/hetio/xswap',
+        'Tracker': 'https://github.com/hetio/xswap/issues',
+        'Publication': 'https://greenelab.github.io/xswap-manuscript/',
+    },
     description='Python-wrapped C/C++ library for degree-preserving network randomization',
     long_description_content_type='text/markdown',
     long_description=long_description,
