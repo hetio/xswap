@@ -1,5 +1,8 @@
+## Derived from https://github.com/pdoc3/pdoc/blob/9d71e3269f32c00828d7698d07ca2df0ef8007cc/pdoc/templates/html.mako licensed under AGPL-3.0.
+## Modified to create source code links to GitHub as per https://github.com/pdoc3/pdoc/issues/100. 
 <%
   import os
+  import functools
 
   import pdoc
   from pdoc.html_helpers import extract_toc, glimpse, to_html as _to_html
@@ -16,14 +19,39 @@
 
   def to_html(text):
     return _to_html(text, module=module, link=link, latex_math=latex_math)
+
+  @functools.lru_cache()
+  def get_latest_commit():
+    import subprocess
+    process_args = ['git', 'rev-list', '--max-count=1', 'HEAD']
+    commit = subprocess.check_output(process_args, universal_newlines=True)
+    return commit.strip()
+
+  def github_url(dobj: pdoc.Doc):
+    import inspect
+    try:
+      lines, start_line = inspect.getsourcelines(dobj.obj)
+      end_line = start_line + len(lines)
+      abs_path = inspect.getmodule(dobj.obj).__file__
+      file_path = os.path.relpath(abs_path, os.getcwd())  # Project-relative path
+      commit = get_latest_commit()
+      url = f"https://github.com/hetio/xswap/blob/{commit}/{file_path}#L{start_line}-L{end_line}"
+      return url
+    except Exception:
+      return None
 %>
 
 <%def name="ident(name)"><span class="ident">${name}</span></%def>
 
 <%def name="show_source(d)">
     % if show_source_code and d.source and d.obj is not getattr(d.inherits, 'obj', None):
+        <div class="source">
+            <summary>
+                <a href="${github_url(d)}">View on GitHub</a>
+            </summary>
+        </div>
         <details class="source">
-            <summary>Source code</summary>
+            <summary>Expand source code</summary>
             <pre><code class="python">${d.source | h}</code></pre>
         </details>
     %endif
