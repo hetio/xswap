@@ -74,10 +74,13 @@ matrix:
       language: python
       python: 3.7
       install:
-        - pip install -r tests-require.txt
-        - pip install pdoc3==0.6.3 ghp-import==0.5.5
+        - pip install --requirement tests-require.txt
+        - pip install pdoc3~=0.7.0 ghp-import~=0.5.5
       script:
-        - pdoc --html --output-dir docs/output/ xswap/ --force
+        - pdoc --force --html
+          --config="git_link_template=\"https://github.com/$TRAVIS_REPO_SLUG/blob/{commit}/{path}#L{start_line}-L{end_line}\""
+          --output-dir=docs/output
+          xswap
       deploy:
         provider: script
         script: bash ci/deploy.sh
